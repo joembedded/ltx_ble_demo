@@ -1,10 +1,10 @@
 # LTX BLE: Using Web Bluetooth to access LTX Data Loggers #
 ** LTX BLE API **
 
-_Web Bluetooth_ is an official _W3C API_, integrated in most modern Browsers (like Chrome, Edge, Opera, …) 
+__Web Bluetooth__ is an official __W3C API__, integrated in most modern Browsers (like Chrome, Edge, Opera, …) 
 on Android and Windows. So it is now very easy to connect to Bluetooth devices 
-with one single software with Desktops/Notebooks (Windows), as well as with Smartphones/Tablets (Android and Windows)!
-__(Unfortunately the Web Bluetooth API is still not available on Safari (iOS), but workarounds exists).__
+with one single software with Desktops/Notebooks (Windows), as well as with Smartphones/Tablets (Android and Windows)! 
+_(Unfortunately the Web Bluetooth API is still not available on Safari (iOS), but workarounds exists)._
 
 !['Some Screenshots of the LTX BLE Demo'](./docs/ble_all.jpg "Some Screenshots of the LTX BLE Demo")
 
