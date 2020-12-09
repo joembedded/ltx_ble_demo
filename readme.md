@@ -9,8 +9,7 @@ _(Unfortunately the Web Bluetooth API is still not available on Safari (iOS), bu
 !['Some Screenshots of the LTX BLE Demo'](./docs/ble_all.jpg "Some Screenshots of the LTX BLE Demo")
 
 It is even not necessary to install any native APPs! The complete software is nothing else, than a _„Simple Web page“_! Extremely convenient and safe!
-
-We used this new technology to access the LTX Data Loggers via Bluetooth. 
+This new technology is used to access the LTX Data Loggers via Bluetooth. 
 
 These are 2 sample devices:
 !['LTX BLE E-Paper'](./docs/epa_logger2.jpg "LTX BLE E-Paper")
