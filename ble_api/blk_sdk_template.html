@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Template for BLX Bluetooth API (C) joembedded.de 2020 -->
+<!-- Template for BLX Bluetooth API (C) joembedded.de -->
 <html>
     <head>
         <meta charset="utf-8">
@@ -283,8 +283,8 @@
 				}
 
 				// Changes! Set new Cookie and write back
-				blxDevice.iparam[4]=(Date.now()/1000).toFixed(0)
 				blxEditedParamGet()
+				blxDevice.iparam[4]=(Date.now()/1000).toFixed(0)
 				blxDevice.iparam_dirtyflag=true
 
 				const enc2 = new TextEncoder()
@@ -446,17 +446,29 @@
 		// await _blxCmdSend(CMD)
 		// if(_blxCmdResult) handle error: throw or alert ..
 		let _blxCmdResult // Report Result here (OK: 0, else String)
+		let _blxCmdBusyFlag = false
+		let _blxCmdFreeCnt = 0
 		async function _blxCmdSend(cmd){
-			document.getElementById("blxCmdRes").textContent="Busy..."
+			document.getElementById("blxStateText").textContent = "Busy"
 			_blxCmdResult = 0
+			_blxCmdBusyFlag = true
+			_blxCmdFreeCnt = 0
 			try{
 				await blx.userSendCmd(cmd);
 				console.log("CMD->",cmd)
-				document.getElementById("blxCmdRes").textContent="OK"
+				_blxCmdBusyFlag = false
+				_blxCmdFreeCnt = 0
+				document.getElementById("blxStateText").textContent="Ready"
 			} catch(error){
-				document.getElementById("blxCmdRes").textContent=error
+				_blxCmdBusyFlag = false
+				_blxCmdFreeCnt = 0
+				document.getElementById("blxStateText").textContent="ERROR: "+error
 				_blxCmdResult = error
 			}
+		}
+		// Called all sec
+		function _blxBusyMonitor(){
+			document.getElementById("blxStateSpinner").textContent=_blxCmdFreeCnt++
 		}
 		
 		// Callback currently to Console only  m:Message, v:Value, xinfo:Text
@@ -469,7 +481,7 @@
 				case 1:
 					document.getElementById("blxConnectButton").textContent = "Connect" // (Re-)Connect
 					document.getElementById("blxInfoLine").textContent = "Disconnected"
-					
+
 					document.getElementById("blxMemory").textContent = '-'
 					document.getElementById("blxSync").textContent = '-'
 					document.getElementById("blxSignal").textContent = '-'
@@ -545,6 +557,7 @@
         function setup() {
 			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
 			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
+			setInterval(_blxBusyMonitor, 1000);
         }
 
         window.addEventListener("load", setup)
@@ -553,7 +566,7 @@
     </head>
 
     <body id='blxbody' style="font-family:arial; font-size:80%;"">
-		<b>BLX-Template V0.30 / 08.12.2020</b>
+		<b>BLX-Template V0.32 / 02.01.2021</b>
 		<button onclick="appFontSize(10)"> + </button>
 		<button onclick="appFontSize(-10)"> - </button>
 		
@@ -595,8 +608,9 @@
 			<br>
 			<br>
 
-			Info:<span id="blxInfoLine">-</span><br>
-			Result:<span id="blxCmdRes">Ready</span>
+			Info: <span id="blxInfoLine">-</span><br>
+			State: <span id="blxStateText">Ready</span>(<span id="blxStateSpinner">-</span>)<br>
+			Result: <span id="blxCmdRes">-</span>
 		</div>
 		<hr>
 		List of known Devices:  <button onclick="updateDeviceList()">Update</button>
