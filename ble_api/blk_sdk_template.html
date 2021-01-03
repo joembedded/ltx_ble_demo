@@ -35,7 +35,7 @@
 		}
 
 		async function showLink(){ // Check if (old) Graf Data is already in Store
-			let link = "(no data)"
+			let link = "(No Data)"
 			try{
 				await blStore.get(blxDevice.deviceMAC + '_xtract.edt')
 				const KeyVal = blStore.result() // undefined opt.
@@ -425,7 +425,18 @@
             })
 			let devlist=""
 			for(let i=0;i<devs.length;i++){
-				devlist+= 'Device:' + (devs[i].advname)+ ' MAC:'+(devs[i].mac)+': '+ devs[i].files +' Files ('+ devs[i].tflen +' Bytes)<br>'
+				devlist+= 'Device:' + (devs[i].advname)+ ' MAC:'+(devs[i].mac)+': '+ devs[i].files +' Files ('+ devs[i].tflen +' Bytes)'
+				// Test if Graph Data available
+				try{
+					await blStore.get(devs[i].mac + '_xtract.edt')
+					const KeyVal = blStore.result() // undefined opt.
+					if(KeyVal !== undefined){
+						devlist+= "<br> - <a target='_blank' href='../gdraw.html?st="+devs[i].mac+"_xtract.edt&sn="+
+						devs[i].advname+"'>Show Graph</a> ("+KeyVal.v.akt_len+" Bytes, "+KeyVal.v.ctime.toLocaleString()+")<br>"
+					}
+				} catch(error){
+					devlist+= ' / (No Data)<br>'
+				}
 			}
 			if(devs.length){
 				document.getElementById('blxDeviceList').innerHTML = "Total: "+lenTotal+ " Bytes:<br>" +devlist
@@ -566,7 +577,7 @@
     </head>
 
     <body id='blxbody' style="font-family:arial; font-size:80%;"">
-		<b>BLX-Template V0.32 / 02.01.2021</b>
+		<b>BLX-Template V0.33 / 03.01.2021</b>
 		<button onclick="appFontSize(10)"> + </button>
 		<button onclick="appFontSize(-10)"> - </button>
 		
