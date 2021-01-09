@@ -4,7 +4,7 @@
 __Web Bluetooth__ is an official __W3C API__, integrated in most modern Browsers (like Chrome, Edge, Opera, …) 
 on Android and Windows. So it is now very easy to connect to Bluetooth devices 
 with one single software with Desktops/Notebooks (Windows), as well as with Smartphones/Tablets (Android and Windows)! 
-_(Unfortunately the Web Bluetooth API is still not available on Safari (iOS), but workarounds exists)._
+_(Unfortunately the Web Bluetooth API is still not available on Safari (iOS), but workarounds exists, using a Wrapper-App with a WebView )._
 
 !['Some Screenshots of the LTX BLE Demo'](./docs/ble_all.jpg "Some Screenshots of the LTX BLE Demo")
 
@@ -30,10 +30,12 @@ This is only the demo, showing the basics of the LTX BLE drivers!
 To allow debugging, LTX BLE drivers support a console type terminal, that can be located into a DOM object.
 These drivers also support sending firmware updates to the device!
 
-Live demo: https://joembedded.de/ltx/ltx_ble_demo/ble_api/blk_sdk_template.html
+Live demo: [BLE API Live](./ble_api/index.html)
 
 
 ---
 
 ## Changelog ##
 - V1.01 08.12.2020 Initial
+- V1.50 09.01.2021 Added iOS Polyfill
+

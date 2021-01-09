@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<!-- 
+ Template for BLX Bluetooth API (C) joembedded.de 
+ Tested on: 
+ Windows: Chrome, Edge, Opera
+ Android: Chrome
+ iOS:	  WebBLE-Browser (BLE Wrapper, https://itunes.apple.com/us/app/webble/id1193531073?ls=1&mt=8 )
+-->
+<html>
+    <head>
+        <meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BLX-Template</title>
+
+		<script src="../filesaver/FileSaver.js"></script>        		
+		<!-- Distribution: uses Minified Files: -->
+		<script src="blx.min.js"></script>        		
+		<script src="blStore.min.js"></script>        		
+		<script src="safari_polyfills.js"></script>        		
+		
+		<script>
+		'use strict'
+
+		//--------- globals ------ 
+		let connectionLevel = 0
+		let advertisingName
+		let blxDevice
+	
+		//----------- helpers -------
+		function disabler(disf){ // Dis-/En-abler for clickable Elements
+			document.getElementById("blxConnectButton").disabled = disf
+
+			if(connectionLevel==0) disf = true // Only disable if FULL Disconnected
+			document.getElementById("blxUploadButton").disabled = disf
+			document.getElementById("blxInfoButton").disabled = disf
+			document.getElementById("blxSyncButton").disabled = disf
+
+			document.getElementById("blxMeasureButton").disabled = disf
+			document.getElementById("blxClearButton").disabled = disf
+			document.getElementById("blxParametersButton").disabled = disf
+		
+		}
+
+		async function showLink(){ // Check if (old) Graf Data is already in Store
+			let link = "(No Data)"
+			try{
+				await blStore.get(blxDevice.deviceMAC + '_xtract.edt')
+				const KeyVal = blStore.result() // undefined opt.
+				if(KeyVal !== undefined){
+					link = "<a target='_blank' href='../gdraw.html?st="+blxDevice.deviceMAC+"_xtract.edt&sn="+
+						advertisingName+"'>Show Graph</a> ("+KeyVal.v.akt_len+" Bytes, "+KeyVal.v.ctime.toLocaleString()+")"
+				}
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			document.getElementById("blxGraph").innerHTML = link
+		}
+		async function calculateMemory(gflag){	// get flag (= with new) if true: disabler() by caller
+			let memstr = "???"
+			try{
+				if(gflag){
+					await _blxCmdSend(".m") // calculate memory
+				}
+				let m = blx.getMemory()
+				let mperc 
+				if(m.max>0) mperc = (m.total*100/m.max).toFixed(2)
+				else mperc = 'Unknown'
+
+				let mmode = "???"
+				switch(m.mode){
+				case 2: 
+				case 0: mmode ="Rec.OFF"; break
+				case 1: mmode = "LINEAR"; break;
+				case 3: mmode = "RING"
+				}
+				memstr = "[Total:"+m.total+"("+mperc+"%,"+mmode+")" 
+				if(gflag) memstr += " New:"+m.incnew
+				memstr += "] Bytes"
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			document.getElementById("blxMemory").textContent = memstr
+		}
+
+		//---------- the buttons ----------------
+		async function blxConnect(){
+			disabler(true)
+			try{
+				if(connectionLevel >= 3) await _blxCmdSend(".d") // disconnect
+				else {
+					await _blxCmdSend(".c") // connect
+					if(connectionLevel === 4){
+						blxDevice = blx.getDevice() 
+						document.getElementById("blxMAC").textContent = blxDevice.deviceMAC
+						await calculateMemory(true)
+						await showLink() 
+						document.getElementById("blxSync").textContent = blxDevice.deltaToApp
+						document.getElementById("blxInfoLine").textContent = "Connected"
+						document.getElementById("blxMeasureData").innerHTML = '-'
+						document.getElementById("blxParameterEdit").innerHTML=""
+					}
+				}
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		async function blxInfo(){
+			disabler(true)
+			try{
+				await _blxCmdSend("v")  // Scan vdir first
+				await calculateMemory(true)
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		async function blxSyncTime(){
+			disabler(true)
+			try{
+				await _blxCmdSend(".t set") 
+				document.getElementById("blxSync").textContent = 0
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		async function blxUpload(){
+			disabler(true)
+			try{
+				await _blxCmdSend(".u") // Upload
+				await calculateMemory(false) // no 'New'
+				await _blxCmdSend(".x") // Extract to 'MAC_xtract.edt'
+				await showLink()
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		let measureData="???"
+		// *todo* Measure might take longer than standard Timeout 5 sec, 
+		// add separate '.m' command in API
+		async function blxMeasure(){
+			disabler(true)
+			document.getElementById("blxMeasureData").innerHTML="Wait..."
+			try{
+				await _blxCmdSend("e 1") // With HK
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		async function blxClear(){	// *todo* Ask if OK!
+			disabler(true)
+			try{
+				document.getElementById("blxInfoLine").textContent = "Start new Measure, Clear all Data"
+				await _blxCmdSend("n") 
+				document.getElementById("blxMemory").textContent = '-'
+				await blStore.remove(blxDevice.deviceMAC + '_xtract.edt') // Also remove from Store
+				await showLink()
+
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		//*********** Parameter-Edit START ******************
+		// Description and Index of Parameters, see 'legacy/edit_lxp.php'
+		// !!! IN Strings '@' is not allowed at Pos 0 (replaced by '?') !!!
+		// !!! '#' is treated as Remark-Separator (replaced by '?') !!!
+		const p100_beschr=[
+			"*@100_System",
+			"*DEVICE_TYP",
+			"*MAX_CHANNELS",
+			"*HK_FLAGS",
+			"*NewCookie [Parameter 10-digit Timestamp.32]",
+			"Device_Name[BLE:$11/total:$41]",
+			"Period_sec[10..86400]",
+			"Period_Offset_sec[0..(Period_sec-1)]",
+			"Period_Alarm_sec[0..Period_sec]",
+			"Period_Internet_sec[0..604799]",
+			"Period_Internet_Alarm_sec[0..Period_Internet_sec]",
+			"UTC_Offset_sec[-43200..43200]",
+			"Flags (B0:Rec B1:Ring) (0: RecOff)",
+			"HK_flags (B0:Bat B1:Temp B2.Hum B3.Perc)",
+			"HK_reload[0..255]",
+			"Net_Mode (0:Off 1:OnOff 2:On_5min 3:Online)",
+			"ErrorPolicy (O:None 1:RetriesForAlarms, 2:RetriesForAll)",
+			"MinTemp_oC[-40..10]",
+			"Period_Internet_Offset[0..Period_Internet_sec]",
+			]
+		const pkan_beschr=[
+			"*@ChanNo",
+			"Action[0..65535] (B0:Meas B1:Cache B2:Alarms)",
+			"Physkan_no[0..65535]",
+			"Kan_caps_str[$8]",
+			"Src_index[0..255]",
+			"Unit[$8]",
+			"Mem_format[0..255]",
+			"DB_id[0..2e31]",
+			"Offset[float]",
+			"Factor[float]",
+			"Alarm_hi[float]",
+			"Alarm_lo[float]",
+			"Messbits[0..65535]",
+			"Xbytes[$32]"
+			]
+		const p200_beschr=[	// sys_param.lxp
+			"*@200_Sys_Param",
+			"APN[$41] (opt.)",
+			"Server[$41]",
+			"Script[$41]",
+			"API Key[$41]",
+			"ConFlags[0..255] (B0:VB B1:ROAM B4:LOG_FILE B5:LOG_UART B7:DBG)",
+			"Pin[0..65535] (opt)",
+			"User[$41]",
+			"Password[$41]",
+			"Max_creg[10..255]",
+			"Port[1..65535]",
+			"Server_timeout_0[1000..65535]",
+			"Server_timeout_run[1000..65535]",
+			"Modem Check Reload[60..3600]",
+			"Bat. Capacity (mAh)[0..100000]",
+			"Bat. Volts 0%[float]",
+			"Bat. Volts 100%[float]",
+			"Max Ringsize (Bytes)[1000..2e31]",
+			"mAmsec/Measure[0..1e9]"
+			]
+		
+		let original_par	// backup of original Parameters
+		
+		// Get Values of all visible Parameters inputs, each array entry has 1 input
+		// Important: NO user input with '@' allowed!
+		// Characters after '#' are treated as comments
+		function blxEditedParamGet(){
+			// Scan List of HTML elements with name '_pidxNN'
+			for(let i=0;i<blxDevice.iparam.length;i++){
+				let pinp = document.getElementById("_pidx"+i)
+				let nval = pinp.value.toString()
+				if(pinp.disabled === false){	// User Edit
+					// Checks...
+					// Replace first @ by '?'
+					if(nval.charAt(0)==='@') nval ='?' + nval.substr(1);
+					// Replace '#' by '?'
+					nval.replace("#","?")
+				}
+				blxDevice.iparam[i]= nval
+			}
+		}
+
+		// Send Edited List, Check first if changed
+		// Changed if synthesized CRC and/length is different
+		//
+		// If Parameter Transfer fails, Risk of not complete iparam.lxp on Device
+		// Then retry! In any case: Last known Parameters are stored as '..#BAK#_iparam.lxp'
+		async function blxParSend(typ){
+			try{
+				blxEditedParamGet()
+				blx.CompactIparam(blxDevice.iparam)
+				blxParameters(false, 0)	// Show Compacted Parameters
+
+				let cres = blx.IparamValidate(blxDevice.iparam)
+				if(cres){	
+					alert("ERROR: Iparam-Check(3):\n"+cres)
+					return
+				}
+
+				const enc = new TextEncoder()
+				let filebuf = enc.encode(blxDevice.iparam.join('\n')+'\n')
+				let crc32 = blx.getCrc32(filebuf)
+
+				let store_iparam = blStore.result() // undefined opt.
+				await blStore.get(blxDevice.deviceMAC + '_iparam.lxp')
+				if(store_iparam !== undefined && 
+					crc32 === store_iparam.v.crc32 && 
+					filebuf.length === store_iparam.v.akt_len && 
+					blxDevice.iparam_dirtyflag === false){
+					// No Changes found
+					document.getElementById("blxParameterEdit").innerHTML=""
+					document.getElementById("blxCmdRes").textContent = "No Changes"
+					return 
+				} else if(store_iparam === undefined) {
+					store_iparam = {v:{}} // Need Obj
+				}
+
+				// Changes! Set new Cookie and write back
+				blxEditedParamGet()
+				blxDevice.iparam[4]=(Date.now()/1000).toFixed(0)
+				blxDevice.iparam_dirtyflag=true
+
+				const enc2 = new TextEncoder()
+				store_iparam.v.bytebuf = enc2.encode(blxDevice.iparam.join('\n')+'\n')
+				store_iparam.v.crc32 = blx.getCrc32(store_iparam.v.bytebuf)
+				store_iparam.v.total_len = store_iparam.v.bytebuf.length
+				store_iparam.v.akt_len = store_iparam.v.total_len
+				store_iparam.v.ctime = new Date(blxDevice.iparam[4]*1000)
+				store_iparam.v.esync_flag = true // Not set by Server->Device!
+
+				await blStore.set(blxDevice.deviceMAC + '_iparam.lxp',store_iparam.v)	// First Store
+				await _blxCmdSend(".fput "+blxDevice.deviceMAC + '_iparam.lxp') // Then Upload 
+				if( _blxCmdResult ) {
+					throw _blxCmdResult 
+				}
+				// If all OK: Remove edited Params and store Backup
+				document.getElementById("blxParameterEdit").innerHTML=""
+				blxDevice.iparam_dirtyflag=false
+				await blStore.set(blxDevice.deviceMAC + '_#BAK_iparam.lxp',store_iparam.v)
+			} catch (err){
+				alert(err + "\nRecommendation: Retry!")
+				document.getElementById("blxCmdRes").textContent = err
+			}
+		}
+		
+
+		function blxParCancel(typ){
+			if(!typ) blxDevice.iparam = original_par
+			else blxDevice.sys_param = original_par
+			document.getElementById("blxParameterEdit").innerHTML=""
+			document.getElementById("blxCmdRes").textContent = "Edit Parameters Cancelled"
+
+		}
+		function blxIparamAddChannel(){
+			try{
+				blxEditedParamGet() // Get changes first
+				blx.IparamAddChannel(blxDevice.iparam, true) 
+				document.getElementById("blxParameterEdit").innerHTML=""
+				blxParameters(false, 0)
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+		}
+
+		// Edit Parameters typ: 0:iparam, 1:sys_param
+		function blxParameters(orig_copy, typ = 0) {
+			const parray = typ?blxDevice.sys_param:blxDevice.iparam
+			if(orig_copy === true) {
+				// Make Deep Copy from Original if called from GUI
+				original_par = []
+				if( parray === undefined ){
+					alert("ERROR: Iparam-Check(1):\nNo Parameters found!")
+					return
+				}
+				for(let i=0;i<parray.length;i++) original_par[i]=parray[i]
+				let cres = blx.IparamValidate(blxDevice.iparam)
+				if(cres){	
+					alert("ERROR: Iparam-Check(2):\n"+cres)
+					return
+				}
+			}
+
+			let beschr
+			let bidx = 0
+			let rel = 0
+			let phtml = ""
+			let lparam = '???'
+			let section = -1
+			for(let i=0; i< parray.length; i++){
+				lparam = parray[i]
+				if(lparam.charAt(0)==='@'){
+					section = parseInt(lparam.substr(1))
+					if(section ===100) {
+						beschr=p100_beschr
+						beschr[0]="*=== System ==="
+					}else if(section===200) {
+						beschr=p200_beschr
+						beschr[0]="*=== Sys_Param ==="
+					}else {
+						beschr=pkan_beschr
+						beschr[0]="*=== Channel #"+section+" ==="
+					}
+					bidx=0
+					rel=0
+					phtml+="<hr>"
+				}else{
+					rel++
+				}
+				// Build 1 line and name Elements '_pidxNN'
+				phtml+='['+i+'(+'+rel+')]' + '<input type="text" id="_pidx'+i+'"  value="' + lparam + '"'
+				if(beschr[rel]!==undefined && beschr[rel].charAt(0)==='*') phtml += " disabled"
+				phtml += "> '"+ beschr[rel]+"'<br>"
+			}
+			phtml+="<br><button onclick='blxParSend("+typ+")'>Send..</button> "
+			// iparam cann add channel
+			if(!typ) phtml+="<button onclick='blxIparamAddChannel()'>Add Channel</button> "
+			phtml+="&nbsp;&nbsp;&nbsp;<button onclick='blxParCancel("+typ+")'>Cancel</button> "
+			phtml+="<hr>"
+			document.getElementById("blxParameterEdit").innerHTML=phtml
+		}
+		//*********** Parameter-Edit END ******************
+
+
+		function appSettings() {
+			alert("*todo* appSettings()")
+		}
+
+		// Simple Demo for Devices
+		async function updateDeviceList(){
+			let devs=[]
+            await blStore.count()
+            let lenTotal = 0
+            await blStore.iterate(function (value) {
+				const storemac = value.k.substr(0, 16)
+				if (storemac.length === 16 && value.k.charAt(16) === '_'){
+					// Find entry for this MAC
+					let idx
+					for(let i=0;i<devs.length;i++){
+						if(devs[i].mac === storemac){
+							idx=i
+							break
+						}
+					}
+					if(idx===undefined) {
+						idx = devs.length
+						devs.push({'mac':storemac, 'files':0, tflen:0, 'advname':'(unknown)'})
+					}
+					if(value.k === storemac + '_#BlxIDs'){ // others: mac_#xxx: internal
+							devs[idx].advname = value.v.advertisingName
+					}else if(value.k.charAt(17) !== '#'){
+						devs[idx].files++
+						if(value.v.akt_len !== undefined){
+							devs[idx].tflen+=value.v.akt_len
+							lenTotal+=value.v.akt_len
+						}
+					}
+				}
+            })
+			let devlist=""
+			for(let i=0;i<devs.length;i++){
+				devlist+= 'Device:' + (devs[i].advname)+ ' MAC:'+(devs[i].mac)+': '+ devs[i].files +' Files ('+ devs[i].tflen +' Bytes)'
+				// Test if Graph Data available
+				try{
+					await blStore.get(devs[i].mac + '_xtract.edt')
+					const KeyVal = blStore.result() // undefined opt.
+					if(KeyVal !== undefined){
+						devlist+= "<br> - <a target='_blank' href='../gdraw.html?st="+devs[i].mac+"_xtract.edt&sn="+
+						devs[i].advname+"'>Show Graph</a> ("+KeyVal.v.akt_len+" Bytes, "+KeyVal.v.ctime.toLocaleString()+")<br>"
+					}
+				} catch(error){
+					devlist+= ' / (No Data)<br>'
+				}
+			}
+			if(devs.length){
+				document.getElementById('blxDeviceList').innerHTML = "Total: "+lenTotal+ " Bytes:<br>" +devlist
+			}else{
+				document.getElementById('blxDeviceList').innerHTML = "(none)"
+			}
+		}
+		
+		function appFontSize(delta){ // Change Fiont Size
+			const bels = document.getElementById("blxbody").style
+			let nfs = parseInt(bels.fontSize) + delta
+			if( nfs < 20 || nfs >200) return
+			bels.fontSize = nfs + "%"
+		}
+
+		//-------- subsystem for BLX ------------
+		// Pattern:
+		// await _blxCmdSend(CMD)
+		// if(_blxCmdResult) handle error: throw or alert ..
+		let _blxCmdResult // Report Result here (OK: 0, else String)
+		let _blxCmdBusyFlag = false
+		let _blxCmdFreeCnt = 0
+		async function _blxCmdSend(cmd){
+			document.getElementById("blxStateText").textContent = "Busy"
+			_blxCmdResult = 0
+			_blxCmdBusyFlag = true
+			_blxCmdFreeCnt = 0
+			try{
+				await blx.userSendCmd(cmd);
+				console.log("CMD->",cmd)
+				_blxCmdBusyFlag = false
+				_blxCmdFreeCnt = 0
+				document.getElementById("blxStateText").textContent="Ready"
+			} catch(error){
+				_blxCmdBusyFlag = false
+				_blxCmdFreeCnt = 0
+				document.getElementById("blxStateText").textContent="ERROR: "+error
+				_blxCmdResult = error
+			}
+		}
+		// Called all sec
+		function _blxBusyMonitor(){
+			document.getElementById("blxStateSpinner").textContent=_blxCmdFreeCnt++
+		}
+		
+		// Callback currently to Console only  m:Message, v:Value, xinfo:Text
+		function bleCallback(m,v,xinfo){
+			switch(m){
+			case 'CON':
+				connectionLevel = v
+				switch(v){
+				case 0: // norm. never sent
+				case 1:
+					document.getElementById("blxConnectButton").textContent = "Connect" // (Re-)Connect
+					document.getElementById("blxInfoLine").textContent = "Disconnected"
+
+					document.getElementById("blxMemory").textContent = '-'
+					document.getElementById("blxSync").textContent = '-'
+					document.getElementById("blxSignal").textContent = '-'
+					document.getElementById("blxMeasureData").innerHTML = '-'
+					
+
+					disabler(false)
+					break
+				case 2: // only advertsing Name known
+					advertisingName = blx.getDevice().advertisingName
+					document.getElementById("blxDevice").textContent = advertisingName
+					document.getElementById("blxInfoLine").textContent = "Connecting..."
+					document.getElementById("blxGraph").innerHTML = "" // During Advertising no Link...
+					break
+				case 3: // 
+					document.getElementById("blxInfoLine").textContent = "Reading IDs..."
+					document.getElementById("blxConnectButton").textContent = "Disconnect"
+					break
+				case 4: // Full Connected
+					break
+				}
+				break
+			case 'PROG': // *todo* 2 passes possible due to data.edt / data.edt.old
+				document.getElementById("blxInfoLine").textContent = v + "%"
+				break
+			case 'GET_OK':
+				document.getElementById("blxInfoLine").textContent = "OK ("+ v + " " + xinfo + ")"
+				break
+			case 'RSSI':
+				document.getElementById("blxSignal").textContent = v
+				m = undefined	// DontShow
+				break
+			case 'MSG':
+				document.getElementById("blxInfoLine").textContent = "MSG" + v + ":" + xinfo 
+				break
+			case 'WARN':
+				document.getElementById("blxCmdRes").textContent = "WARNING" + v + ":" + xinfo 
+				break
+
+			// Measure Header
+			case 'MEAS_CH':
+				measureData = "\nChannels:" + v
+				break
+			case 'MEAS_T':
+				measureData += " (Wait Max:" + v/1000 + " sec)"
+				document.getElementById("blxMeasureData").innerHTML= measureData + "<br>..."
+				break
+			// Measure Values (later)
+			case 'MEAS_V':
+				if(v==90 && blxDevice.sys_param !== undefined && blxDevice.sys_param[16]!==undefined){
+					const ulow = parseFloat(blxDevice.sys_param[15])
+					const uhigh = parseFloat(blxDevice.sys_param[16])
+					if(uhigh>ulow){
+						let bperc = ((parseFloat(xinfo) - ulow)/(uhigh-ulow)*100).toFixed(2)
+						if(bperc>100) bperc = 100
+						xinfo += '(' + bperc + '%)'
+					}		
+				}else if(v==93 && blxDevice.sys_param !== undefined && blxDevice.sys_param[14]!==undefined){	// Energy
+					const bcap = parseFloat(blxDevice.sys_param[14])
+					if(!isNaN(bcap) && bcap>0){
+						const bperc = (parseFloat(xinfo)*100 / bcap).toFixed(2)
+						xinfo += '(' + bperc + '%)'
+					}
+				}
+				measureData += "<br>(" +v+") " + xinfo
+				document.getElementById("blxMeasureData").innerHTML= measureData
+				break
+			}
+			if(m !== undefined) console.log("BLX: ",m,v,xinfo)
+		}
+
+		//---------------- setup ------------
+        function setup() {
+			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
+			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
+			setInterval(_blxBusyMonitor, 1000);
+        }
+
+        window.addEventListener("load", setup)
+				
+        </script>
+    </head>
+
+    <body id='blxbody' style="font-family:arial; font-size:80%;"">
+		<b>BLX-Template V0.33 / 03.01.2021</b>
+		<button onclick="appFontSize(10)"> + </button>
+		<button onclick="appFontSize(-10)"> - </button>
+		
+		<hr>
+		<div>
+			<button id="blxConnectButton" onclick="blxConnect()">Connect</button>
+			Device:<span id="blxDevice">-</span>
+			MAC:<span id="blxMAC">-</span>
+			Sig.(dbm):<span id="blxSignal">-</span>
+			<br>
+			<br>
+			
+			<button disabled id="blxInfoButton" onclick="blxInfo()">Memory Info</button>
+			Memory:<span id="blxMemory">-</span>
+			<br>
+			<br>
+
+			<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
+			Delta(sec):<span id="blxSync">-</span>
+			<br>
+			<br>
+
+			<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
+			<span id="blxGraph"> </span>
+			<br>
+			<br>
+
+			<button disabled id="blxMeasureButton" onclick="blxMeasure()">Measure</button>
+			Values:<span id="blxMeasureData">-</span>
+			<br>
+			<br>
+
+			<button disabled id="blxClearButton" onclick="blxClear()">Clear Memory</button>
+			<br>
+			<br>
+
+			<button disabled id="blxParametersButton" onclick="blxParameters(true)">Device Parameter</button>
+			Parameters:<span id="blxParameterEdit">-</span>
+			<br>
+			<br>
+
+			Info: <span id="blxInfoLine">-</span><br>
+			State: <span id="blxStateText">Ready</span>(<span id="blxStateSpinner">-</span>)<br>
+			Result: <span id="blxCmdRes">-</span>
+		</div>
+		<hr>
+		List of known Devices:  <button onclick="updateDeviceList()">Update</button>
+		<div id='blxDeviceList'></div>
+		<hr>
+		<button onclick="blx.setTerminal('blxTerminal')">Show Terminal</button>
+		<button onclick="blx.setTerminal()">Hide Terminal</button>
+		&nbsp;&nbsp;&nbsp;<button onclick="appSettings()">App Setup</button>
+		<div id="blxTerminal"> 
+			<!-- Element for BLE Terminal -->
+		</div>
+		<hr>
+    </body>
+</html>
