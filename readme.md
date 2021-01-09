@@ -30,7 +30,7 @@ This is only the demo, showing the basics of the LTX BLE drivers!
 To allow debugging, LTX BLE drivers support a console type terminal, that can be located into a DOM object.
 These drivers also support sending firmware updates to the device!
 
-Live demo: [BLE API Live](./ble_api/index.html)
+Live demo: [BLE API Live](https://joembedded.github.io/ltx_ble_demo/ble_api/index.html)
 
 
 ---
