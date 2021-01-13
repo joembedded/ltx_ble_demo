@@ -38,6 +38,7 @@
 			document.getElementById("blxMeasureButton").disabled = disf
 			document.getElementById("blxClearButton").disabled = disf
 			document.getElementById("blxParametersButton").disabled = disf
+			document.getElementById("blxSysParButton").disabled = disf
 		
 		}
 
@@ -238,9 +239,10 @@
 		// Get Values of all visible Parameters inputs, each array entry has 1 input
 		// Important: NO user input with '@' allowed!
 		// Characters after '#' are treated as comments
-		function blxEditedParamGet(){
+		function blxEditedParamGet(typ){
 			// Scan List of HTML elements with name '_pidxNN'
-			for(let i=0;i<blxDevice.iparam.length;i++){
+			const plen = typ?blxDevice.sys_param.length:blxDevice.iparam.length
+			for(let i=0;i<plen;i++){
 				let pinp = document.getElementById("_pidx"+i)
 				let nval = pinp.value.toString()
 				if(pinp.disabled === false){	// User Edit
@@ -250,7 +252,8 @@
 					// Replace '#' by '?'
 					nval.replace("#","?")
 				}
-				blxDevice.iparam[i]= nval
+				if(!typ) blxDevice.iparam[i]= nval
+				else blxDevice.sys_param[i]= nval
 			}
 		}
 
@@ -260,63 +263,125 @@
 		// If Parameter Transfer fails, Risk of not complete iparam.lxp on Device
 		// Then retry! In any case: Last known Parameters are stored as '..#BAK#_iparam.lxp'
 		async function blxParSend(typ){
-			try{
-				blxEditedParamGet()
-				blx.CompactIparam(blxDevice.iparam)
-				blxParameters(false, 0)	// Show Compacted Parameters
+			if(!typ){	// iparam
+				try{
+					blxEditedParamGet(0)
+					blx.CompactIparam(blxDevice.iparam)
+					blxParameters(false, 0)	// Show Compacted Parameters
 
-				let cres = blx.IparamValidate(blxDevice.iparam)
-				if(cres){	
-					alert("ERROR: Iparam-Check(3):\n"+cres)
-					return
-				}
+					let cres = blx.IparamValidate(blxDevice.iparam)
+					if(cres){	
+						alert("ERROR: Iparam-Check(3):\n"+cres)
+						return
+					}
 
-				const enc = new TextEncoder()
-				let filebuf = enc.encode(blxDevice.iparam.join('\n')+'\n')
-				let crc32 = blx.getCrc32(filebuf)
+					const enc = new TextEncoder()
+					let filebuf = enc.encode(blxDevice.iparam.join('\n')+'\n')
+					let crc32 = blx.getCrc32(filebuf)
 
-				let store_iparam = blStore.result() // undefined opt.
-				await blStore.get(blxDevice.deviceMAC + '_iparam.lxp')
-				if(store_iparam !== undefined && 
-					crc32 === store_iparam.v.crc32 && 
-					filebuf.length === store_iparam.v.akt_len && 
-					blxDevice.iparam_dirtyflag === false){
-					// No Changes found
+					await blStore.get(blxDevice.deviceMAC + '_iparam.lxp')
+					let store_iparam = blStore.result() // undefined opt.
+					if(store_iparam !== undefined && 
+						crc32 === store_iparam.v.crc32 && 
+						filebuf.length === store_iparam.v.akt_len && 
+						blxDevice.iparam_dirtyflag === false){
+						// No Changes found
+						document.getElementById("blxParameterEdit").innerHTML=""
+						document.getElementById("blxCmdRes").textContent = "No Changes"
+						return 
+					} else if(store_iparam === undefined) {
+						store_iparam = {v:{}} // Need Obj
+					}
+
+					// Changes! Set new Cookie and write back
+					blxEditedParamGet(0)
+					blxDevice.iparam[4]=(Date.now()/1000).toFixed(0)
+					blxDevice.iparam_dirtyflag=true
+
+					const enc2 = new TextEncoder()
+					store_iparam.v.bytebuf = enc2.encode(blxDevice.iparam.join('\n')+'\n')
+					store_iparam.v.crc32 = blx.getCrc32(store_iparam.v.bytebuf)
+					store_iparam.v.total_len = store_iparam.v.bytebuf.length
+					store_iparam.v.akt_len = store_iparam.v.total_len
+					store_iparam.v.ctime = new Date(blxDevice.iparam[4]*1000)
+					store_iparam.v.esync_flag = true // Not set by Server->Device!
+
+					await blStore.set(blxDevice.deviceMAC + '_iparam.lxp',store_iparam.v)	// First Store
+					await _blxCmdSend(".fput "+blxDevice.deviceMAC + '_iparam.lxp') // Then Upload 
+					if( _blxCmdResult ) {
+						throw _blxCmdResult 
+					}
+					await _blxCmdSend("X") // Check iparam
+					if( _blxCmdResult ) {
+						throw _blxCmdResult 
+					}
+					// If all OK: Remove edited Params and store Backup
 					document.getElementById("blxParameterEdit").innerHTML=""
-					document.getElementById("blxCmdRes").textContent = "No Changes"
-					return 
-				} else if(store_iparam === undefined) {
-					store_iparam = {v:{}} // Need Obj
+					blxDevice.iparam_dirtyflag=false
+					await blStore.set(blxDevice.deviceMAC + '_#BAK_iparam.lxp',store_iparam.v)
+				} catch (err){
+					alert(err + "\nRecommendation: Retry!")
+					document.getElementById("blxCmdRes").textContent = err
 				}
+			}else{	// SysParam
+				try{
+					blxEditedParamGet(1)
+					blxParameters(false, 1)	// Show Compacted Parameters
 
-				// Changes! Set new Cookie and write back
-				blxEditedParamGet()
-				blxDevice.iparam[4]=(Date.now()/1000).toFixed(0)
-				blxDevice.iparam_dirtyflag=true
+					let cres = blx.SysParamValidate(blxDevice.sys_param)
+					if(cres){	
+						alert("ERROR: SysParam-Check(3):\n"+cres)
+						return
+					}
 
-				const enc2 = new TextEncoder()
-				store_iparam.v.bytebuf = enc2.encode(blxDevice.iparam.join('\n')+'\n')
-				store_iparam.v.crc32 = blx.getCrc32(store_iparam.v.bytebuf)
-				store_iparam.v.total_len = store_iparam.v.bytebuf.length
-				store_iparam.v.akt_len = store_iparam.v.total_len
-				store_iparam.v.ctime = new Date(blxDevice.iparam[4]*1000)
-				store_iparam.v.esync_flag = true // Not set by Server->Device!
+					const enc = new TextEncoder()
+					let filebuf = enc.encode(blxDevice.sys_param.join('\n')+'\n')
+					let crc32 = blx.getCrc32(filebuf)
 
-				await blStore.set(blxDevice.deviceMAC + '_iparam.lxp',store_iparam.v)	// First Store
-				await _blxCmdSend(".fput "+blxDevice.deviceMAC + '_iparam.lxp') // Then Upload 
-				if( _blxCmdResult ) {
-					throw _blxCmdResult 
+					await blStore.get(blxDevice.deviceMAC + '_sys_param.lxp')
+					let store_sysParam = blStore.result() // undefined opt.
+					if(store_sysParam !== undefined && 
+						crc32 === store_sysParam.v.crc32 && 
+						filebuf.length === store_sysParam.v.akt_len && 
+						blxDevice.sys_param_dirtyflag === false){
+						// No Changes found
+						document.getElementById("blxParameterEdit").innerHTML=""
+						document.getElementById("blxCmdRes").textContent = "No Changes"
+						return 
+					} else if(store_sysParam === undefined) {
+						store_sysParam = {v:{}} // Need Obj
+					}
+
+					blxDevice.sys_param_dirtyflag=true
+
+					const enc2 = new TextEncoder()
+					store_sysParam.v.bytebuf = enc2.encode(blxDevice.sys_param.join('\n')+'\n')
+					store_sysParam.v.crc32 = blx.getCrc32(store_sysParam.v.bytebuf)
+					store_sysParam.v.total_len = store_sysParam.v.bytebuf.length
+					store_sysParam.v.akt_len = store_sysParam.v.total_len
+					store_sysParam.v.ctime = new Date(blxDevice.sys_param[4]*1000)
+					store_sysParam.v.esync_flag = true // Not set by Server->Device!
+
+					await blStore.set(blxDevice.deviceMAC + '_sys_param.lxp',store_sysParam.v)	// First Store
+					await _blxCmdSend(".fput "+blxDevice.deviceMAC + '_sys_param.lxp') // Then Upload 
+					if( _blxCmdResult ) {
+						throw _blxCmdResult 
+					}
+					await _blxCmdSend("Y") // Check SysParam
+					if( _blxCmdResult ) {
+						throw _blxCmdResult 
+					}
+
+					// If all OK: Remove edited Params and store Backup
+					document.getElementById("blxParameterEdit").innerHTML=""
+					blxDevice.sys_param_dirtyflag=false
+					await blStore.set(blxDevice.deviceMAC + '_#BAK_sys_param.lxp',store_sysParam.v)
+				} catch (err){
+					alert(err + "\nRecommendation: Retry!")
+					document.getElementById("blxCmdRes").textContent = err
 				}
-				// If all OK: Remove edited Params and store Backup
-				document.getElementById("blxParameterEdit").innerHTML=""
-				blxDevice.iparam_dirtyflag=false
-				await blStore.set(blxDevice.deviceMAC + '_#BAK_iparam.lxp',store_iparam.v)
-			} catch (err){
-				alert(err + "\nRecommendation: Retry!")
-				document.getElementById("blxCmdRes").textContent = err
 			}
-		}
-		
+		} // blxParSend
 
 		function blxParCancel(typ){
 			if(!typ) blxDevice.iparam = original_par
@@ -325,7 +390,7 @@
 			document.getElementById("blxCmdRes").textContent = "Edit Parameters Cancelled"
 
 		}
-		function blxIparamAddChannel(){
+		function blxIparamAddChannel(){ // Only for iparam
 			try{
 				blxEditedParamGet() // Get changes first
 				blx.IparamAddChannel(blxDevice.iparam, true) 
@@ -337,7 +402,7 @@
 		}
 
 		// Edit Parameters typ: 0:iparam, 1:sys_param
-		function blxParameters(orig_copy, typ = 0) {
+		function blxParameters(orig_copy, typ) {
 			const parray = typ?blxDevice.sys_param:blxDevice.iparam
 			if(orig_copy === true) {
 				// Make Deep Copy from Original if called from GUI
@@ -584,7 +649,7 @@
     </head>
 
     <body id='blxbody' style="font-family:arial; font-size:80%;"">
-		<b>BLX-Template V0.33 / 03.01.2021</b>
+		<b>BLX-Template V0.35 / 13.01.2021</b>
 		<button onclick="appFontSize(10)"> + </button>
 		<button onclick="appFontSize(-10)"> - </button>
 		
@@ -621,10 +686,12 @@
 			<br>
 			<br>
 
-			<button disabled id="blxParametersButton" onclick="blxParameters(true)">Device Parameter</button>
+			<button disabled id="blxParametersButton" onclick="blxParameters(true,0)">Device Parameter</button>
+			<button disabled id="blxSysParButton" onclick="blxParameters(true,1)">Device SysPar</button>
 			Parameters:<span id="blxParameterEdit">-</span>
 			<br>
 			<br>
+			
 
 			Info: <span id="blxInfoLine">-</span><br>
 			State: <span id="blxStateText">Ready</span>(<span id="blxStateSpinner">-</span>)<br>
