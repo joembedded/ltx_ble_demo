@@ -28,9 +28,14 @@
 	
 		//----------- helpers -------
 		function disabler(disf){ // Dis-/En-abler for clickable Elements
+			const pinOk = blx.getPinOK()
 			document.getElementById("blxConnectButton").disabled = disf
 
-			if(connectionLevel==0) disf = true // Only disable if FULL Disconnected
+			let dss = "none"
+			if(pinOk!==true && disf === false && connectionLevel>1) dss = "block"	
+			document.getElementById("blxPinEnter").style.display = dss
+
+			if(connectionLevel==0 || pinOk!==true ) disf = true // Only disable if FULL Disconnected or PIN Error
 			document.getElementById("blxUploadButton").disabled = disf
 			document.getElementById("blxInfoButton").disabled = disf
 			document.getElementById("blxSyncButton").disabled = disf
@@ -85,6 +90,7 @@
 
 		//---------- the buttons ----------------
 		async function blxConnect(){
+			document.getElementById("blxCmdRes").textContent = '-' 
 			disabler(true)
 			try{
 				if(connectionLevel >= 3) await _blxCmdSend(".d") // disconnect
@@ -101,6 +107,20 @@
 						document.getElementById("blxParameterEdit").innerHTML=""
 					}
 				}
+			} catch(error){
+				document.getElementById("blxCmdRes").textContent=error
+			}
+			disabler(false)
+		}
+
+		async function blxSetPin(){ // CMD used to enable PIN
+			document.getElementById("blxCmdRes").textContent = '-' 
+			const pin = document.getElementById("blxPIN").value
+			disabler(true)
+			try{
+				if(pin.length<1) throw "ERROR: PIN EMPTY"
+				await _blxCmdSend(".i "+pin)  
+				document.getElementById("blxPIN").value = ''
 			} catch(error){
 				document.getElementById("blxCmdRes").textContent=error
 			}
@@ -649,7 +669,7 @@
     </head>
 
     <body id='blxbody' style="font-family:arial; font-size:80%;"">
-		<b>BLX-Template V0.35 / 13.01.2021</b>
+		<b>BLX-Template V0.37 / 20.01.2021</b>
 		<button onclick="appFontSize(10)"> + </button>
 		<button onclick="appFontSize(-10)"> - </button>
 		
@@ -661,6 +681,13 @@
 			Sig.(dbm):<span id="blxSignal">-</span>
 			<br>
 			<br>
+
+			<span id="blxPinEnter" style="display:none">
+				<button id="blxSetPinButton" onclick="blxSetPin()">SetPIN</button>
+				PIN:<input type="text" id="blxPIN">
+				<br>	
+				<br>
+			</span>
 			
 			<button disabled id="blxInfoButton" onclick="blxInfo()">Memory Info</button>
 			Memory:<span id="blxMemory">-</span>
