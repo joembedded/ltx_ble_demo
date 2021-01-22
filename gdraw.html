@@ -1,0 +1,118 @@
+<!-- G-DRAW (C) JoEmbedded.de Vsersion: see g_draw.js -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="css/g_draw.css">
+	<script src="jquery/jquery-3.3.1.min.js"></script>
+	<script src="js/g_draw.js"></script>
+    <script src="filesaver/FileSaver.js"></script>
+    <script src="ble_api/blStore.js"></script>
+
+	<script>
+	if (typeof $ === 'undefined') {
+		alert("ERROR: Missing Scripts!");
+	}
+	</script>
+    <title>G-Draw</title>
+	<style>
+	html,body {	
+		padding: 0;
+		margin: 0;
+		height: 100%; 
+		width: 100%;
+		font-family: Arial, sans-serif;
+		font-size: 15px;
+	}
+	</style>
+  </head>
+  
+  <body id="gBody">
+	<div id="zoomBox" class="g-zoombox"></div>
+	<div id="gInfo" class="g-info"></div>
+	<div id="dropzone" class="g-dropzone"><h1>[Drop '*.EDT' files here]</h1></div>
+	<div id="spinner" class="g-spinner"><h1><br><br><br></h1><i class="fas fa-spinner fa-spin fa-5x"></i></div>
+	<button id="menuDrop" onclick="menueClick()" class="g-menuedrop">&nbsp;&nbsp;<i class="fas fa-bars"></i>&nbsp;&nbsp;</button>
+	<div id="versInfo" class="g-versinfo">V0.x (01.01.2019)</div>
+	<div id="msgBox" class="g-message">
+		<div>
+			<div id="msgText"></div>
+			<br><button onclick="ownAlertClose()"> OK </button>
+		</div>
+	</div>
+	
+	<div style="margin: 0 5px; font-weight: bold">
+		<span id="gTitle">G-Draw - EDT-Viewer</span> 
+		<span id="hasNet" style="background: black; color:red; display:none"> OFFLINE </span><br>
+		<span id="gSubTitle">&nbsp;</span>	<!-- or Info -->
+		
+	</div>
+	<div class="g-graf">
+		<div class="g-container-h">
+			<div class="g-container-v">
+				<div id="gBound">
+					<canvas id="gDraw" width=1 height=1>
+					*Draw* <!-- Drawing Area -->
+					</canvas>
+				</div> 
+				<div> <!-- 2.nd Child Toolbox (FlexBox) -->
+					<div>
+						<button onclick="g_start()"><i class="fas fa-step-backward"></i> Start</button>
+						<button onclick="g_left()"><i class="fas fa-caret-left"></i> Left</button>
+						<button onclick="g_right()"><i class="fas fa-caret-right"></i> Right</button>
+						<button onclick="g_end()"><i class="fas fa-step-forward"></i> End</button>
+						<button title="Zoom End" onclick="g_zoomin()"><i class="fas fa-search-plus"></i> Zoom</button>
+						<button title="Full View" onclick="g_zoomout()"><i class="fas fa-search-minus"></i> Full</button>
+					</div>
+					<div>
+						<button title="Download Data as CSV" onclick="g_export()"><i class="far fa-file-excel"></i> Export CSV</button>
+						<small>
+							<span style="white-space: nowrap"><input title="Alarms marked with '*'" id="optAlarms" type="checkbox">Alarms</span>
+							<span style="white-space: nowrap"><input title="Less Events in CSV" id="optCompact" type="checkbox">Compact</span>
+							<span style="white-space: nowrap"><input title="Decimal Comma instead of Point" id="optComma" type="checkbox">Dec.Comma</span>
+						</small>
+					</div>
+					
+					<div>
+						<button onclick="g_moveup()"><i class="fas fa-caret-up"></i> Up&nbsp;&nbsp;&nbsp;&nbsp;</button>
+						<button onclick="g_movedown()"><i class="fas fa-caret-down"></i> Down</button>
+					</div>
+				</div>
+			</div>
+			<div id="legDrop" class="g-legend"> <!-- Legend Age: Sync: -->
+				<div id="selRefresh" style="line-height: 1.5;">
+					<span id="lastSeen"><br></span>
+					<div id="autoRefresh">
+						<input id="checkRefresh" title="Refresh Automatically" onclick="autosyncClick()" type="checkbox"> Auto 
+						<button id="butRefresh" title="Refresh Data" onclick="g_refresh()"><i class="fas fas fa-sync"></i> Refresh</button>
+						<br>
+						<select id="numberOfPoints" title="Refresh Data Lines" onchange="limitSelectClick()">
+						<option>50 Lines</option>
+						<option>100 Lines</option>
+						<option>250 Lines</option>
+						<option>1000 Lines</option>
+						<option>5000 Lines</option>
+						<option selected>Maximum</option>
+						</select>
+					</div>
+					<span id="anzLinesLoaded"></span><br>
+				</div>
+				
+				<input id="showDots" title="Dots in Graph" onclick="dotsClick()" type="checkbox" checked> <i class="far fa-dot-circle fa-fw"></i> Show Dots<br>
+				<input id="autoZoom" title="Auto Zoom visible Channels" onclick="autoZoomClick()" type="checkbox" checked> <i class="fas fa-expand fa-fw"></i> Auto Zoom<br>
+				<hr>
+				<button onclick="allClick()"> <i class="fas fa-check-double fa-fw"> </i> All</button><br>
+				<input id="gEvents" type="checkbox" onclick="legendClick(1)"><i id="chan1" class="fas fa-flag fa-fw"></i> Events<br>
+				<div id="gButtons">
+					<!--
+					<input type="checkbox"><span class="g-legcol" ></span></input> Test1<br>
+					<input type="checkbox"><span class="g-legcol" style="background: red"></span></input> Test2<br>
+					-->
+				</div>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>
