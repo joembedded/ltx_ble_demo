@@ -1,0 +1,209 @@
+/* Style for G-Draw */
+/* Except htmp and body */
+/* Title */
+.g-graf{	
+  margin: 0;
+  padding: 0 ;
+  height: 93%;
+}
+/* (main) Holds 2 Columns: Draw+Toolbox | Channels */
+.g-container-h {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  justify-content: flex-end;
+  height: 93%;
+  background: white;
+}
+/* Style for Legend */
+.g-legend {
+   /* display: none; Optional */
+   padding: 5px;
+   line-height: 2.5; /* easier to select on Mobile */
+   overflow: auto;
+   font-size: 80%;
+   white-space: nowrap;
+   min-width: 120px;
+}
+
+@media (max-width:500px){ /* x-499 */
+	.g-legend {
+		display: none;
+		position:absolute; 
+		right:0; 
+		top:34px; 
+		background: white; 
+		border: 1px solid black;
+	}
+}
+
+.g-menuedrop{
+	position:absolute; 
+	right:0; 
+	top: 0;
+	font-size: 100%;
+	z-index: 7;
+	color: white;
+	background:  #4CAF50;
+	margin: 0;
+	padding: 0.6em;
+	
+}
+
+@media (min-width:500px){
+	.g-menuedrop{
+		display: none;
+	}
+}
+	
+/* Legend: Channels COLOR items*/
+.g-legcol {
+	padding: 0 8px;
+}
+
+/* Draw fill page */
+.g-container-h > :first-child {
+	flex-grow: 1;
+}
+/* (sub) Holds 1st Column as 2 Rows: Draw/Toolbox */
+.g-container-v {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+/* Style for Drawing-area Parent of Canvas. Important: line-height: 0 */
+.g-container-v > :first-child {
+   line-height: 0;
+   padding: 0;
+   margin: 0;
+   flex-grow: 1;
+   /*background: green; Debug*/
+   
+}
+/* Canvas*/
+.g-container-v > :first-child > * {
+   background: lightgrey;
+}
+
+/* Style for Toolbox */
+.g-container-v > :last-child {
+   padding: 0;
+   background: white;
+   display: flex;
+   flex-direction: row;
+}
+.g-container-v > :last-child  > div{
+	padding: 0;
+	margin: 0 5px;
+}
+.g-versinfo {
+	position: fixed;
+	right: 10px;
+	bottom: 10px;
+	margin: 0;
+	text-align: right;
+	font-size: 66%;
+}
+
+/* Dropzone */
+.g-dropzone {
+  display: none;
+  position: absolute;
+  left: 5vw;
+  top: 7vh;
+  width: 90vw;
+  height: 85vh;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  background: rgba(200,200,200,0.8);
+  border: 5px dashed gray;
+  z-index: 10;
+}
+
+/* Infobox (Mouse: Values)*/
+.g-info {
+  display: none;
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  padding: 2px;
+  font-size: 80%;
+ 
+  background: white;
+  border: 1px solid black;
+  z-index: 8;
+  
+}
+.g-spinner{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  color: green;
+  margin: 0;
+  text-align: center;
+  background: rgba(230,230,230,0.6);
+  z-index: 999;
+}
+.g-message{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  padding:  0;
+  color: black;
+  margin: 0;
+  text-align: center;
+  background: rgba(230,230,230,0.6);
+  z-index: 998;
+}
+.g-message > div{
+  padding: 20px;
+  margin: 10% 20%;
+  color: black;
+  background: white;
+  border: 1px solid black;
+	
+}
+
+/* Zoombox (Rubberband) */
+.g-zoombox {
+  display: none;
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  width: 50px;
+  height: 50px;
+  border: 2px dotted red;
+  z-index: 9;
+  animation:g-zoomblink 1s infinite alternate;
+   
+}
+@keyframes g-zoomblink {
+  from {opacity: 1} 
+  to {opacity: 0.3}
+}
+
+button{  /*Secondary Button */
+	font-size: smaller;
+	margin: 0.5em 0;
+	padding: 0.8em;
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	cursor: pointer;
+	transition-duration: 0.5s;	
+}
+input:hover {
+	box-shadow: 0 0 0.3em 0.3em rgba(0,0,0,0.08);
+}
+button:hover {
+	background-color: darkgrey;
+	color: black;
+}

@@ -1,0 +1,107 @@
+/* JoEmbedded CSS addon to W3.CSS */  
+.jo-fullsky {    
+   background-image: linear-gradient(rgb(0,38,110),rgb(125,175,210));
+   position: fixed; /* Stay in place */
+   z-index: 5; /* Sit on top */
+   left: 0;
+   top: 0;
+   width: 100%; /* Full width */
+   height: 100%; /* Full height */
+}
+
+/* Add Sky to modal background */
+.jo-sky{
+  /*background-image: linear-gradient(rgb(0,38,110,0.7),rgb(125,175,210,0.4));*/
+  background: rgba(200,200,200,0.7);
+  z-index: 5; /* Sit on top */
+}
+
+.jo-spinner{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20% 0;
+  color: green;
+  margin: 0;
+  text-align: center;
+  background: rgba(200,200,200,0.7);
+  z-index: 999;
+}
+
+.jo-mac{
+  display: inline-block;
+  min-width: 13em;
+}
+
+.jo-versinfo {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	padding: 5px;
+	margin: 0;
+	text-align: right;
+	font-size: 66%;
+}
+
+:hover{
+   transition-duration: 0.8s;	
+	
+}
+.jo-blink{
+    animation:blinkingText 1.5s infinite;
+}
+
+.jo-parsec{ /* Secondary Parameters, nowmally invisible */
+	display: none;
+	background: #ffffcc; /* pale yellow */
+}
+
+@keyframes blinkingText{
+  from {opacity: 1} 
+  to {opacity: 0.5}
+}
+
+table {
+	border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #f3f3f3;}
+
+hr{ border:0;border-top:2px solid #ccc;margin:5px 0}
+
+label{ font-size: 80%; }
+
+input[type=text], input[type=password], input[type=email]{ /* but no checkbox */
+    font-size: initial;
+    border: 1px solid lightgrey;
+    transition-duration: 0.4s;	
+}
+input:valid {
+	background-color: rgb(220,255,220); /* Light green */
+}
+input:invalid {
+	background-color: rgb(245,245,245); /* Light gray*/
+}
+input:hover {
+	box-shadow: 0 0 0.3em 0.3em rgba(0,0,0,0.08);
+}
+
+/* Center on larger screens */
+@media (min-width: 400px) {
+    .jo-modalbox {
+        width: 400px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%); 
+    }
+}
+/* Hide on small schreens */
+@media (max-width:500px){
+    .jo-hide-small {
+	display: none!important;
+    }
+}

@@ -1,0 +1,108 @@
+/* JoEmbedded.de login.css */
+html,body{
+    font-family: Arial, sans-serif;
+	font-size: 15px;
+	line-height: 1.5;
+
+    /* Like Sky */
+    background-image: linear-gradient(rgb(0,38,110),rgb(125,175,210));
+    height: 100%;
+    margin: 0;
+}
+h1{font-size:36px}h2{font-size:30px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}.w3-serif{font-family:serif}
+h1,h2,h3,h4,h5,h6{font-family:Arial,sans-serif;font-weight:400;margin:10px 0}
+
+.form-container {
+    width: calc(100% - 2em); /* Overwritten */
+    padding: 0.5em 1em;
+    background: white;
+}
+
+.header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: black;
+    text-align: center;
+    font-size: small;
+}
+/* Center on larger screens */
+@media screen and (min-width: 400px) {
+    .form-container {
+        width: 400px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%); 
+        margin: 0.5em;
+        box-shadow: 0.5em 0.5em 0.7em rgba(0,0,0,0.3);
+    }
+}
+.form-item {
+    padding: 0.5em 0;
+}
+label{
+    font-size: small;
+}
+.err{
+   background-color: rgb(255,180,180);
+}
+.ok {
+   /*background-color: lightgreen;*/
+}
+input[type=text], input[type=password], input[type=email]{ /* but no checkbox */
+    font-size: initial;
+    width: calc(100% - 1em);
+    padding: 0.5em; /* inner */
+    border: 1px solid lightgrey;
+	transition-duration: 0.4s;	
+}
+input:valid {
+	background-color: rgb(220,255,220); /* Light green */
+}
+input:invalid {
+	background-color: rgb(245,245,245); /* Light gray*/
+}
+button[type=submit] {
+    font-size: initial;
+    font-weight: bold;
+    margin:  0.5em 0;
+    padding: 0.8em;
+    background-color: #4CAF50; /* w3-green */
+    color: white;
+    border: none;
+    cursor: pointer;
+	transition-duration: 0.5s;	
+}
+button[type=button]{  /*Secondary Button */
+    font-size: smaller;
+    margin: 0.5em 0;
+    padding: 0.8em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+	transition-duration: 0.5s;	
+}
+input:hover {
+	box-shadow: 0 0 0.3em 0.3em rgba(0,0,0,0.08);
+}
+button:hover {
+    background-color: darkgrey;
+    color: black;
+	/*box-shadow: 0 0 0.2em 0.2em rgba(0,0,0,0.2);*/
+}
+.animate { 
+  animation: fade 1s
+}
+@keyframes fade {
+  from {opacity: 0} 
+  to {opacity: 1}
+}
