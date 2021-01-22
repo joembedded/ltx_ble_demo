@@ -1,0 +1,57 @@
+<!-- GPS_View (C) JoEmbedded.de Version: see gps_view.js  png-src: html\wrk\leaflet2 -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="css/g_draw.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+	<script src="jquery/jquery-3.3.1.min.js"></script>
+	<script src="js/gps_view.js"></script>
+
+	<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+	#navi {
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		width: 80%;
+		z-index: 990;
+		background: white;
+		padding: 5px;
+		border: 1px solid gray;
+	}
+	</style>
+
+	<script>
+	if (typeof $ === 'undefined') {
+		alert("ERROR: Missing Scripts!");
+	}
+	</script>
+    <title>GPS View</title>
+  </head>
+  
+  <body id="gBody">
+	<div id="spinner" class="g-spinner"><h1><br><br><br></h1><i class="fas fa-spinner fa-spin fa-5x"></i></div>
+	<div id="msgBox" class="g-message">
+		<div>
+			<div id="msgText"></div>
+			<br><button onclick="ownAlertClose()"> OK </button>
+		</div>
+	</div>
+
+	<div id="navi" >Navi: 
+		<input id="posidx" oninput="slider()" type="range" min="0" max="1000" value="0" style="width: 90%" /><br>
+		<input type="checkbox" id="checkCompact" checked onchange="compactClick()">Compact | <span id="infoBox">xxx</span><br>
+		<span id="infoLine">(Info)</span>
+	</div>
+
+	<div id="map"></div>
+	
+  </body>
+</html>
