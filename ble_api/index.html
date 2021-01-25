@@ -33,7 +33,7 @@
 			document.getElementById("blxConnectButton").disabled = disf
 
 			let dss = "none"
-			if (pinOk !== true && disf === false && connectionLevel > 1) dss = "block"
+			if (pinOk !== true && disf === false && connectionLevel >= 3) dss = "block"
 			document.getElementById("blxPinEnter").style.display = dss
 
 			if (connectionLevel == 0 || pinOk !== true) disf = true // Only disable if FULL Disconnected or PIN Error
@@ -696,7 +696,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;"">
-		<b>BLX-Template V0.38 / 21.01.2021</b>
+		<b>BLX-Template V0.39 / 25.01.2021</b>
 		<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 

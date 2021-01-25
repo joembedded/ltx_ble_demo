@@ -32,6 +32,12 @@ These drivers also support sending firmware updates to the device!
 
 Live demo: [BLE API Live (in Repository LTX BLE Demo)](https://joembedded.github.io/ltx_ble_demo/ble_api/index.html)
 
+*Software structure:*
+Only these files in 'ble_api/' are necessary:
+- index.html
+- blx.min.js - Driver for WebBluetooth
+- blStore.min.js - Interface to the Browser's IndexedDB
+
 
 ---
 
