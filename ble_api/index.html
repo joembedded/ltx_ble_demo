@@ -49,6 +49,7 @@
 			document.getElementById("blxParametersButton").disabled = disf
 			document.getElementById("blxSysParButton").disabled = disf
 
+			document.getElementById("blxBadgeButton").disabled = disf // Only for Factory Setup, see urlpar.badge
 		}
 
 		async function showLink() { // Check if (old) Graf Data is already in Store
@@ -687,8 +688,29 @@
 			if (m !== undefined) console.log("BLX: ", m, v, xinfo)
 		}
 
+		// Print a Badge (if Labeprinter is enabled) Factory Function!
+		function blxPrintBadge(){
+			let urlpar = "mac="+blxDevice.deviceMAC+
+				"&type="+blxDevice.deviceType+
+				"&fw="+blxDevice.firmwareVersion+
+				"&advname="+blxDevice.advertisingName
+
+				window.open("../labels/badge.html?"+encodeURI(urlpar), "_blank")
+		}
+
 		//---------------- setup ------------
 		function setup() {
+			// Isolate URL Parameters
+			const qs = location.search.substr(1).split('&')
+  			var urlpar = {}
+  			for (let x = 0; x < qs.length; x++) {
+    			let kv = qs[x].split('=')
+    			if (kv[1] === undefined) kv[1] = ''
+    			urlpar[kv[0]] = kv[1]
+  			}
+			if(urlpar.badge !== undefined){	// Show Print Badge
+				document.getElementById("blxBadge").style.display = "block"
+			}
 			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
 			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
 			setInterval(_blxBusyMonitor, 1000);
@@ -698,8 +720,8 @@
 	</script>
 </head>
 
-<body id='blxbody' style="font-family:arial; font-size:80%;"">
-		<b>BLX-Template V0.39 / 25.01.2021</b>
+<body id='blxbody' style="font-family:arial; font-size:80%;">
+		<b>BLX-Template V0.40 / 12.03.2021</b>
 		<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
@@ -713,6 +735,12 @@
 		Sig.(dbm):<span id="blxSignal">-</span>
 		<br>
 		<br>
+
+		<span id="blxBadge" style="display:none"> <!-- print Badge onyly for Factory Setup-->
+			<button disabled id="blxBadgeButton" onclick="blxPrintBadge()"><i>Print Badge</i></button>
+			<br>
+			<br>
+		</span>
 
 		<span id="blxPinEnter" style="display:none">
 			<button id="blxSetPinButton" onclick="blxSetPin()">SetPIN</button>
