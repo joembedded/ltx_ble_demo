@@ -38,6 +38,7 @@
 			let dss = "none"
 			if (pinOk !== true && disf === false && connectionLevel >= 3) dss = "block"
 			document.getElementById("blxPinEnter").style.display = dss
+			document.getElementById("blxBadgeButton").disabled = disf // Only for Factory Setup, see urlpar.badge
 
 			if (connectionLevel == 0 || pinOk !== true) disf = true // Only disable if FULL Disconnected or PIN Error
 			document.getElementById("blxUploadButton").disabled = disf
@@ -49,7 +50,6 @@
 			document.getElementById("blxParametersButton").disabled = disf
 			document.getElementById("blxSysParButton").disabled = disf
 
-			document.getElementById("blxBadgeButton").disabled = disf // Only for Factory Setup, see urlpar.badge
 		}
 
 		async function showLink() { // Check if (old) Graf Data is already in Store
@@ -621,12 +621,15 @@
 							document.getElementById("blxSignal").textContent = '-'
 							document.getElementById("blxMeasureData").innerHTML = '-'
 
-
 							disabler(false)
 							break
-						case 2: // only advertsing Name known
+						case 2: // only advertsing Name known, no MAC etc..
 							advertisingName = blx.getDevice().advertisingName
 							document.getElementById("blxDevice").textContent = advertisingName
+							document.getElementById("blxMAC").textContent = '-'
+							document.getElementById("blxType").textContent = '-'
+							document.getElementById("blxFW").textContent = '-'
+
 							document.getElementById("blxInfoLine").textContent = "Connecting..."
 							document.getElementById("blxGraph").innerHTML = "" // During Advertising no Link...
 							break
@@ -689,31 +692,38 @@
 		}
 
 		// Print a Badge (if Labeprinter is enabled) Factory Function!
-		function blxPrintBadge(){
-			let urlpar = "mac="+blxDevice.deviceMAC+
-				"&type="+blxDevice.deviceType+
-				"&fw="+blxDevice.firmwareVersion+
-				"&advname="+blxDevice.advertisingName
+		function blxPrintBadge() {
+			let uflag=false
+			if( blxDevice === undefined) {
+				blxDevice = blx.getDevice()
+				uflag=true
+			}
+			let urlpar = "mac=" + blxDevice.deviceMAC +
+				"&type=" + blxDevice.deviceType +
+				"&fw=" + blxDevice.firmwareVersion +
+				"&advname=" + blxDevice.advertisingName
 
-				window.open("../labels/badge.html?"+encodeURI(urlpar), "_blank")
+			window.open("../labels/badge.html?" + encodeURI(urlpar), "_blank")
+			if(uflag === true) blxDevice = undefined
 		}
 
 		//---------------- setup ------------
 		function setup() {
 			// Isolate URL Parameters
 			const qs = location.search.substr(1).split('&')
-  			var urlpar = {}
-  			for (let x = 0; x < qs.length; x++) {
-    			let kv = qs[x].split('=')
-    			if (kv[1] === undefined) kv[1] = ''
-    			urlpar[kv[0]] = kv[1]
-  			}
-			if(urlpar.badge !== undefined){	// Show Print Badge
+			var urlpar = {}
+			for (let x = 0; x < qs.length; x++) {
+				let kv = qs[x].split('=')
+				if (kv[1] === undefined) kv[1] = ''
+				urlpar[kv[0]] = kv[1]
+			}
+			if (urlpar.badge !== undefined) { // Show Print Badge
 				document.getElementById("blxBadge").style.display = "block"
 			}
 			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
 			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
 			setInterval(_blxBusyMonitor, 1000);
+
 		}
 
 		window.addEventListener("load", setup)
@@ -721,8 +731,8 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-		<b>BLX-Template V0.40 / 12.03.2021</b>
-		<button onclick=" appFontSize(10)"> + </button>
+	<b>BLX-Template V0.41 / 15.04.2021</b>
+	<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
 	<hr>
@@ -736,7 +746,8 @@
 		<br>
 		<br>
 
-		<span id="blxBadge" style="display:none"> <!-- print Badge onyly for Factory Setup-->
+		<span id="blxBadge" style="display:none">
+			<!-- print Badge onyly for Factory Setup-->
 			<button disabled id="blxBadgeButton" onclick="blxPrintBadge()"><i>Print Badge</i></button>
 			<br>
 			<br>
