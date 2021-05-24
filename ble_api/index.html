@@ -720,6 +720,9 @@
 			if (urlpar.badge !== undefined) { // Show Print Badge
 				document.getElementById("blxBadge").style.display = "block"
 			}
+			if (urlpar.pin !== undefined) { // Set Default Pin
+				document.getElementById("blxPIN").value = urlpar.pin
+			}
 			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
 			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
 			setInterval(_blxBusyMonitor, 1000);
@@ -731,7 +734,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.41 / 15.04.2021</b>
+	<b>BLX-Template V0.42 / 24.05.2021</b>
 	<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
