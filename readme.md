@@ -11,12 +11,19 @@ _(Unfortunately the Web Bluetooth API is still not available on Safari (iOS), bu
 It is even not necessary to install any native APPs! The complete software is nothing else, than a _„Simple Web page“_! Extremely convenient and safe!
 This new technology is used to access the LTX Data Loggers via Bluetooth. 
 
-These are 2 sample devices:
+These are 3 sample devices:
 !['LTX BLE E-Paper (only visible in Repository LTX BLE Demo)'](./docs/epa_logger2.jpg "LTX BLE E-Paper")
+
 A simple LTX Climate Logger with E-Paper, internal and external Sensor and Bluetooth for the local communication.
 
 !['LTraX Tracker (only visible in Repository LTX BLE Demo)'](./docs/LTrax_Tracker.jpg "LTraX Tracker")
+
 An Ultra-low-power Tracker, based on the LTX platform. The tracker uses 2G and LTE-M(4G) to send data to the LTX Cloud and Bluetooth for local communication.
+
+!['Open-SDI12-Blue'](https://github.com/joembedded/Open-SDI12-Blue/blob/master/hardware/u-Blox_anna-b112/module_0v1.jpg)
+
+An Open SDI12 Sensor Node, based on the LTX platform. The Sensor uses SDI12 bus and  Bluetooth for local communication.
+
 
 Data and setups are stored in the Browser’s Cache. Because LTX uses flexible data formats, it is even possible to use the same tools (like graphical viewers or CSV exports) 
 as the LTX Server software! 
@@ -44,4 +51,5 @@ Only these files in 'ble_api/' are necessary:
 ## Changelog ##
 - V1.01 08.12.2020 Initial
 - V1.50 09.01.2021 Added iOS Polyfill
+- V1.90 01.08.2021 Added OSX Sensors in HTML
 

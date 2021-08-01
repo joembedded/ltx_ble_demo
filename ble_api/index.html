@@ -41,15 +41,24 @@
 			document.getElementById("blxBadgeButton").disabled = disf // Only for Factory Setup, see urlpar.badge
 
 			if (connectionLevel == 0 || pinOk !== true) disf = true // Only disable if FULL Disconnected or PIN Error
+			document.getElementById("blxSyncButton").disabled = disf
+			document.getElementById("blxMeasureButton").disabled = disf
+
 			document.getElementById("blxUploadButton").disabled = disf
 			document.getElementById("blxInfoButton").disabled = disf
-			document.getElementById("blxSyncButton").disabled = disf
-
-			document.getElementById("blxMeasureButton").disabled = disf
 			document.getElementById("blxClearButton").disabled = disf
 			document.getElementById("blxParametersButton").disabled = disf
 			document.getElementById("blxSysParButton").disabled = disf
 
+			
+			// Don't show Logger Buttons for "only" Sensors
+			if(blxDevice !== undefined && blxDevice.deviceType>1000) dss = "block"
+			else dss="none"
+
+			document.getElementById("blxUploadButtonSpan").style.display = dss
+			document.getElementById("blxInfoButtonSpan").style.display = dss
+			document.getElementById("blxClearButtonSpan").style.display = dss
+			document.getElementById("blxParametersSpan").style.display = dss
 		}
 
 		async function showLink() { // Check if (old) Graf Data is already in Store
@@ -101,13 +110,15 @@
 		}
 
 		async function show_details() {
-			if (connectionLevel === 4) {
+			if (connectionLevel >= 3) {
 				blxDevice = blx.getDevice()
 				document.getElementById("blxMAC").textContent = blxDevice.deviceMAC
 				document.getElementById("blxType").textContent = blxDevice.deviceType
 				document.getElementById("blxFW").textContent = blxDevice.firmwareVersion
-				await calculateMemory(true)
-				await showLink()
+				if (connectionLevel ==4){ // Only for Loggers
+					await calculateMemory(true)
+					await showLink()
+				}
 				document.getElementById("blxSync").textContent = blxDevice.deltaToApp
 				document.getElementById("blxInfoLine").textContent = "Connected"
 				document.getElementById("blxMeasureData").innerHTML = '-'
@@ -505,7 +516,7 @@
 
 
 		function appSettings() {
-			alert("*todo* appSettings()")
+			alert("*todo* appSettings()\n\nThis is only an Example!\n(C) JoEmbedded.de")
 		}
 
 		// Simple Demo for Devices
@@ -652,10 +663,10 @@
 					m = undefined // DontShow
 					break
 				case 'MSG':
-					document.getElementById("blxInfoLine").textContent = "MSG" + v + ":" + xinfo
+					document.getElementById("blxInfoLine").textContent = "MSG " + v + ":" + xinfo
 					break
 				case 'WARN':
-					document.getElementById("blxCmdRes").textContent = "WARNING" + v + ":" + xinfo
+					document.getElementById("blxCmdRes").textContent = "WARNING " + v + ":" + xinfo
 					break
 
 					// Measure Header
@@ -734,7 +745,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.42 / 24.05.2021</b>
+	<b>BLX-Template V0.45 / 01.08.2021</b>
 	<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
@@ -763,36 +774,45 @@
 			<br>
 		</span>
 
-		<button disabled id="blxInfoButton" onclick="blxMemoryInfo()">Memory Info</button>
-		Memory:<span id="blxMemory">-</span>
-		<br>
-		<br>
+		<span id="blxInfoButtonSpan" style="display:none">
+			<button disabled id="blxInfoButton" onclick="blxMemoryInfo()">Memory Info</button>
+			Memory:<span id="blxMemory">-</span>
+			<br>
+			<br>	
+		</span>
 
-		<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
+		<!-- Span SYNC for Loggers and Sensors -->
+ 		<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
 		Delta(sec):<span id="blxSync">-</span>
 		<br>
 		<br>
 
-		<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
-		<span id="blxGraph"> </span>
-		<br>
-		<br>
+		<span id="blxUploadButtonSpan" style="display:none">
+			<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
+			<span id="blxGraph"> </span>
+			<br>
+			<br>
+		</span>
 
+		<!-- Span MEASURE for Loggers and Sensors -->
 		<button disabled id="blxMeasureButton" onclick="blxMeasure()">Measure</button>
 		Values:<span id="blxMeasureData">-</span>
 		<br>
 		<br>
 
-		<button disabled id="blxClearButton" onclick="blxClear()">Clear Memory</button>
-		<br>
-		<br>
+		<span id="blxClearButtonSpan" style="display:none">
+			<button disabled id="blxClearButton" onclick="blxClear()">Clear Memory</button>
+			<br>
+			<br>
+		</span>
 
-		<button disabled id="blxParametersButton" onclick="blxParameters(true,0)">Device Parameter</button>
-		<button disabled id="blxSysParButton" onclick="blxParameters(true,1)">Device SysPar</button>
-		Parameters:<span id="blxParameterEdit">-</span>
-		<br>
-		<br>
-
+		<span id="blxParametersSpan" style="display:none">
+			<button disabled id="blxParametersButton" onclick="blxParameters(true,0)">Device Parameter</button>
+			<button disabled id="blxSysParButton" onclick="blxParameters(true,1)">Device SysPar</button>
+			Parameters:<span id="blxParameterEdit">-</span>
+			<br>
+			<br>
+		</span>
 
 		Info: <span id="blxInfoLine">-</span><br>
 		State: <span id="blxStateText">Ready</span>(<span id="blxStateSpinner">-</span>)<br>
