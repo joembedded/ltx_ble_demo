@@ -564,10 +564,10 @@
 					await blStore.get(devs[i].mac + '_xtract.edt')
 					const KeyVal = blStore.result() // undefined opt.
 					if (KeyVal !== undefined) {
-						devlist += "<br> - <a target='_blank' href='../gdraw.html?st=" + devs[i].mac + "_xtract.edt&sn=" +
+						devlist += "<br> &nbsp;&nbsp; - <a target='_blank' href='../gdraw.html?st=" + devs[i].mac + "_xtract.edt&sn=" +
 							devs[i].advname + "'>Show Graph</a> (" + KeyVal.v.akt_len + " Bytes, " + KeyVal.v.ctime
 							.toLocaleString() + ")<br>"
-					}
+					} else devlist += "<br>"
 				} catch (error) {
 					devlist += ' / (No Data)<br>'
 				}
@@ -745,7 +745,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.46 / 30.08.2021</b>
+	<b>BLX-Template V0.47 / 15.09.2021</b>
 	<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
