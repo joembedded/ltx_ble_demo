@@ -55,6 +55,7 @@
 			if(blxDevice !== undefined && blxDevice.deviceType>1000) dss = "block"
 			else dss="none"
 
+			document.getElementById("blxSyncButtonSpan").style.display = dss
 			document.getElementById("blxUploadButtonSpan").style.display = dss
 			document.getElementById("blxInfoButtonSpan").style.display = dss
 			document.getElementById("blxClearButtonSpan").style.display = dss
@@ -745,7 +746,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.47 / 15.09.2021</b>
+	<b>BLX-Template V0.48 / 05.11.2021</b>
 	<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
@@ -761,7 +762,7 @@
 		<br>
 
 		<span id="blxBadge" style="display:none">
-			<!-- print Badge onyly for Factory Setup-->
+			<!-- print Badge only for Factory Setup-->
 			<button disabled id="blxBadgeButton" onclick="blxPrintBadge()"><i>Print Badge</i></button>
 			<br>
 			<br>
@@ -781,11 +782,12 @@
 			<br>	
 		</span>
 
-		<!-- Span SYNC for Loggers and Sensors -->
- 		<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
-		Delta(sec):<span id="blxSync">-</span>
-		<br>
-		<br>
+		<span id="blxSyncButtonSpan" style="display:none">
+	 		<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
+			Delta(sec):<span id="blxSync">-</span>
+			<br>
+			<br>
+		</span>
 
 		<span id="blxUploadButtonSpan" style="display:none">
 			<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
@@ -794,7 +796,7 @@
 			<br>
 		</span>
 
-		<!-- Span MEASURE for Loggers and Sensors -->
+		<!-- Span MEASURE for Loggers AND Sensors -->
 		<button disabled id="blxMeasureButton" onclick="blxMeasure()">Measure</button>
 		Values:<span id="blxMeasureData">-</span>
 		<br>
