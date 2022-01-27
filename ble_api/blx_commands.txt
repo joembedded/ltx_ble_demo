@@ -1,4 +1,4 @@
-BLX.JS and BLSTORE.JS - 30.08.2021
+BLX.JS and BLSTORE.JS - 27.01.2022
 ==================================
 (C) JoEmbedded.de 
 
@@ -7,8 +7,7 @@ where "blxTerminal" is an empty <div>, see ble_api/index.html
 
 There are 2 types of commands. Commands starting with '.' are interpreted by BLX ('SysCommands', others
 are directly sent via BLE to the device. (see 'ltx_ble.c'). Of courese, some commands can be entered
-in multiple ways, like "Reset" and ".reset". 
-
+in multiple ways, like "Reset" and ".reset". (Remark: "*" repeats last command (only in Terminal)).
 
 SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
 --------------------------------------------------------------
