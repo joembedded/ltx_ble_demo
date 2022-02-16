@@ -1,9 +1,11 @@
-BLX.JS and BLSTORE.JS - 27.01.2022
-==================================
+BLX.JS, BlueWorker.cs and BLSTORE.JS
+====================================
 (C) JoEmbedded.de 
 
-Commands for Terminal (enable Terminal with blx.setTerminal("blxTerminal", bleCallback),
+BSX: Commands for Terminal (enable Terminal with blx.setTerminal("blxTerminal", bleCallback),
 where "blxTerminal" is an empty <div>, see ble_api/index.html
+
+WIN: Commands in BlueWorker.cs
 
 There are 2 types of commands. Commands starting with '.' are interpreted by BLX ('SysCommands', others
 are directly sent via BLE to the device. (see 'ltx_ble.c'). Of courese, some commands can be entered
@@ -13,10 +15,10 @@ SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
 --------------------------------------------------------------
 .q
 .quit 
-	Hide Terminal
+	BLX: Hide Terminal
 	
 .cls
-	Clear Terminal
+	BLX: Clear Terminal
 	
 .s
 .store
@@ -74,7 +76,8 @@ SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
 	
 .c
 .connect
-	Show BLE-Connect Window
+	BLX: Show BLE-Connect Window 
+	WIN: Connect last unsed BleAdr
 
 .d
 .disconnect
@@ -144,7 +147,11 @@ SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
 .t [set]
 .time [set]
 	Querry ('.t') or set ('.t set') RTC on device
-	
+
+
+.devicelist
+	WIN: Show DeviceList/Cache
+
 ***
 	
 
