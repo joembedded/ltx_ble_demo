@@ -2,7 +2,7 @@ BLX.JS, BlueWorker.cs and BLSTORE.JS
 ====================================
 (C) JoEmbedded.de 
 
-BSX: Commands for Terminal (enable Terminal with blx.setTerminal("blxTerminal", bleCallback),
+BLX: Commands for Terminal (enable Terminal with blx.setTerminal("blxTerminal", bleCallback),
 where "blxTerminal" is an empty <div>, see ble_api/index.html
 
 WIN: Commands in BlueWorker.cs
@@ -65,6 +65,7 @@ SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
 .cf [[VAL_FS] VAL_MEM]
 .connectionfast [[VAL_FS] VAL_MEM]
 	set/query fast connection speed for fileops and/or memory ops
+	VAL_FS for data transfer VAL_MEM for internalCpuFlash Speed (slower)
 
 .l [ANZ]
 .lines [ANZ]
@@ -115,6 +116,8 @@ SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
     .g FNAME pos0 - from pos0 (Middle to End)
     .g FNAME pos0 anz - anz Bytes from pos0 (Only Start of File)
 
+	BLX & WIN OK!
+
 .p [SYNCFLAG]
 .put [SYNCFLAG]
 	(only for devices with Filesystem)
@@ -144,10 +147,12 @@ SysCommands (from 'blx.js' -> async function blxSysCmd (cmd)):
 .reset
 	Reset device (will terminate BLE connection)
 
+
 .t [set]
 .time [set]
 	Querry ('.t') or set ('.t set') RTC on device
-
+	BLX only
+	WIN: included in ".info"
 
 .devicelist
 	WIN: Show DeviceList/Cache
