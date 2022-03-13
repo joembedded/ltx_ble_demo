@@ -240,7 +240,7 @@
 			"Period_Internet_Alarm_sec[0..Period_Internet_sec]",
 			"UTC_Offset_sec[-43200..43200]",
 			"Flags (B0:Rec B1:Ring) (0: RecOff)",
-			"HK_flags (B0:Bat B1:Temp B2.Hum B3.Perc)",
+			"HK_flags (B0:Bat B1:Temp B2.Hum B3.Perc B4.Baro)",
 			"HK_reload[0..255]",
 			"Net_Mode (0:Off 1:OnOff 2:On_5min 3:Online)",
 			"ErrorPolicy (O:None 1:RetriesForAlarms, 2:RetriesForAll)",
@@ -672,6 +672,9 @@
 				case 'ERR':
 					document.getElementById("blxCmdRes").textContent = "ERROR " + v + ":" + xinfo
 					break
+				case 'BZY':
+					// Busy/Action notification - *todo* see BLX.JS 'Z'
+					break
 
 					// Measure Header
 				case 'MEAS_CH':
@@ -749,7 +752,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.50 / 29.11.2021</b>
+	<b>BLX-Template V0.51 / 14.03.2022</b>
 	<button onclick=" appFontSize(10)"> + </button>
 	<button onclick="appFontSize(-10)"> - </button>
 
