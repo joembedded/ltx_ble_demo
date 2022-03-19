@@ -45,6 +45,7 @@ Only these files in 'ble_api/' are necessary:
 - blx.min.js - Driver for WebBluetooth
 - blStore.min.js - Interface to the Browser's IndexedDB
 
+## Important: This repository ('ltx_legacy') is automatically generated/maintained by scripts! No Feedback to Issues/Request/Comments ##
 
 ---
 
