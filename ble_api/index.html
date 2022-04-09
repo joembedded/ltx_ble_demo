@@ -50,10 +50,10 @@
 			document.getElementById("blxParametersButton").disabled = disf
 			document.getElementById("blxSysParButton").disabled = disf
 
-			
+
 			// Don't show Logger Buttons for "only" Sensors
-			if(blxDevice !== undefined && blxDevice.deviceType>1000) dss = "block"
-			else dss="none"
+			if (blxDevice !== undefined && blxDevice.deviceType > 1000) dss = "block"
+			else dss = "none"
 
 			document.getElementById("blxSyncButtonSpan").style.display = dss
 			document.getElementById("blxUploadButtonSpan").style.display = dss
@@ -116,7 +116,7 @@
 				document.getElementById("blxMAC").textContent = blxDevice.deviceMAC
 				document.getElementById("blxType").textContent = blxDevice.deviceType
 				document.getElementById("blxFW").textContent = blxDevice.firmwareVersion
-				if (connectionLevel ==4){ // Only for Loggers
+				if (connectionLevel == 4) { // Only for Loggers
 					await calculateMemory(true)
 					await showLink()
 				}
@@ -565,7 +565,8 @@
 					await blStore.get(devs[i].mac + '_xtract.edt')
 					const KeyVal = blStore.result() // undefined opt.
 					if (KeyVal !== undefined) {
-						devlist += "<br> &nbsp;&nbsp; - <a target='_blank' href='../gdraw.html?st=" + devs[i].mac + "_xtract.edt&sn=" +
+						devlist += "<br> &nbsp;&nbsp; - <a target='_blank' href='../gdraw.html?st=" + devs[i].mac +
+							"_xtract.edt&sn=" +
 							devs[i].advname + "'>Show Graph</a> (" + KeyVal.v.akt_len + " Bytes, " + KeyVal.v.ctime
 							.toLocaleString() + ")<br>"
 					} else devlist += "<br>"
@@ -711,10 +712,10 @@
 
 		// Print a Badge (if Labeprinter is enabled) Factory Function!
 		function blxPrintBadge() {
-			let uflag=false
-			if( blxDevice === undefined) {
+			let uflag = false
+			if (blxDevice === undefined) {
 				blxDevice = blx.getDevice()
-				uflag=true
+				uflag = true
 			}
 			let urlpar = "mac=" + blxDevice.deviceMAC +
 				"&type=" + blxDevice.deviceType +
@@ -722,7 +723,7 @@
 				"&advname=" + blxDevice.advertisingName
 
 			window.open("../labels/badge.html?" + encodeURI(urlpar), "_blank")
-			if(uflag === true) blxDevice = undefined
+			if (uflag === true) blxDevice = undefined
 		}
 
 		//---------------- setup ------------
@@ -743,18 +744,16 @@
 			}
 			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
 			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
-			setInterval(_blxBusyMonitor, 1000);
-
+			setInterval(_blxBusyMonitor, 1000)
 		}
-
-		window.addEventListener("load", setup)
+		window.addEventListener("load", setup);
 	</script>
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.51 / 14.03.2022</b>
-	<button onclick=" appFontSize(10)"> + </button>
-	<button onclick="appFontSize(-10)"> - </button>
+	<b>BLX-Template V0.52 / 11.04.2022</b>
+	<button onclick='appFontSize(10)'> + </button>
+	<button onclick='appFontSize(-10)'> - </button>
 
 	<hr>
 	<div>
@@ -785,11 +784,11 @@
 			<button disabled id="blxInfoButton" onclick="blxMemoryInfo()">Memory Info</button>
 			Memory:<span id="blxMemory">-</span>
 			<br>
-			<br>	
+			<br>
 		</span>
 
 		<span id="blxSyncButtonSpan" style="display:none">
-	 		<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
+			<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
 			Delta(sec):<span id="blxSync">-</span>
 			<br>
 			<br>
