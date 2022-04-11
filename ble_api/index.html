@@ -210,8 +210,13 @@
 		async function blxClear() { // *todo* Ask if OK!
 			disabler(true)
 			try {
-				document.getElementById("blxInfoLine").textContent = "Start new Measure, Clear all Data"
-				await _blxCmdSend("n")
+				if(blxDevice.diskCheckOK !== undefined && blxDevice.diskCheckOK == true){
+					document.getElementById("blxInfoLine").textContent = "Start new Measure, Clear all Data"
+					await _blxCmdSend("n")
+				}else{
+					document.getElementById("blxInfoLine").textContent = "Start new Measure, Clear all Data (Clean FlashDisk, may need up to 240 sec)"
+					await _blxCmdSend("n1",240000) // Possible slow!
+				}
 				document.getElementById("blxMemory").textContent = '-'
 				await blStore.remove(blxDevice.deviceMAC + '_xtract.edt') // Also remove from Store
 				await showLink()
@@ -595,13 +600,13 @@
 		let _blxCmdResult // Report Result here (OK: 0, else String)
 		let _blxCmdBusyFlag = false
 		let _blxCmdFreeCnt = 0
-		async function _blxCmdSend(cmd) {
+		async function _blxCmdSend(cmd, cmdtimeout) {
 			document.getElementById("blxStateText").textContent = "Busy"
 			_blxCmdResult = 0
 			_blxCmdBusyFlag = true
 			_blxCmdFreeCnt = 0
 			try {
-				await blx.userSendCmd(cmd);
+				await blx.userSendCmd(cmd, cmdtimeout);
 				console.log("CMD->", cmd)
 				_blxCmdBusyFlag = false
 				_blxCmdFreeCnt = 0
@@ -751,7 +756,7 @@
 </head>
 
 <body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.52 / 11.04.2022</b>
+	<b>BLX-Template V0.53 / 11.04.2022</b>
 	<button onclick='appFontSize(10)'> + </button>
 	<button onclick='appFontSize(-10)'> - </button>
 
