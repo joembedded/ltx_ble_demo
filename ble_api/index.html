@@ -22,6 +22,8 @@
 	<script src="blStore.min.js"></script>
 	<script src="safari_polyfills.js"></script>
 
+	<link rel="stylesheet" href="w3.css"> <!-- from nice CSS https://www.w3schools.com/-->
+
 	<script>
 		'use strict'
 
@@ -116,7 +118,7 @@
 				document.getElementById("blxMAC").textContent = blxDevice.deviceMAC
 				document.getElementById("blxType").textContent = blxDevice.deviceType
 				document.getElementById("blxFW").textContent = blxDevice.firmwareVersion
-				if (connectionLevel == 4) { // Only for Loggers
+				if (connectionLevel == 4 && blxDevice.deviceType >= 1000) { // Only for Loggers
 					await calculateMemory(true)
 					await showLink()
 				}
@@ -210,12 +212,13 @@
 		async function blxClear() { // *todo* Ask if OK!
 			disabler(true)
 			try {
-				if(blxDevice.diskCheckOK !== undefined && blxDevice.diskCheckOK == true){
+				if (blxDevice.diskCheckOK !== undefined && blxDevice.diskCheckOK == true) {
 					document.getElementById("blxInfoLine").textContent = "Start new Measure, Clear all Data"
 					await _blxCmdSend("n")
-				}else{
-					document.getElementById("blxInfoLine").textContent = "Start new Measure, Clear all Data (Clean FlashDisk, may need up to 240 sec)"
-					await _blxCmdSend("n1",240000) // Possible slow!
+				} else {
+					document.getElementById("blxInfoLine").textContent =
+						"Start new Measure, Clear all Data (Clean FlashDisk, may need up to 240 sec)"
+					await _blxCmdSend("n1", 240000) // Possible slow!
 				}
 				document.getElementById("blxMemory").textContent = '-'
 				await blStore.remove(blxDevice.deviceMAC + '_xtract.edt') // Also remove from Store
@@ -522,7 +525,7 @@
 
 
 		function appSettings() {
-			alert("*todo* appSettings()\n\nThis is only an Example!\n(C) JoEmbedded.de")
+			alert("BLX.JS - Web Bluetooth\n\nThis is only an Example forBLX.JS!\n(C) JoEmbedded.de")
 		}
 
 		// Simple Demo for Devices
@@ -584,13 +587,6 @@
 			} else {
 				document.getElementById('blxDeviceList').innerHTML = "(none)"
 			}
-		}
-
-		function appFontSize(delta) { // Change Fiont Size
-			const bels = document.getElementById("blxbody").style
-			let nfs = parseInt(bels.fontSize) + delta
-			if (nfs < 20 || nfs > 200) return
-			bels.fontSize = nfs + "%"
 		}
 
 		//-------- subsystem for BLX ------------
@@ -755,92 +751,100 @@
 	</script>
 </head>
 
-<body id='blxbody' style="font-family:arial; font-size:80%;">
-	<b>BLX-Template V0.53 / 11.04.2022</b>
-	<button onclick='appFontSize(10)'> + </button>
-	<button onclick='appFontSize(-10)'> - </button>
-
-	<hr>
-	<div>
-		<button id="blxConnectButton" onclick="blxConnect()">Connect</button>
-		Device:<span id="blxDevice">-</span>
-		MAC:<span id="blxMAC">-</span>
-		Type:<span id="blxType">-</span>
-		FW:V<span id="blxFW">-</span>
-		Sig.(dbm):<span id="blxSignal">-</span>
-		<br>
-		<br>
-
-		<span id="blxBadge" style="display:none">
-			<!-- print Badge only for Factory Setup-->
-			<button disabled id="blxBadgeButton" onclick="blxPrintBadge()"><i>Print Badge</i></button>
-			<br>
-			<br>
-		</span>
-
-		<span id="blxPinEnter" style="display:none">
-			<button id="blxSetPinButton" onclick="blxSetPin()">SetPIN</button>
-			PIN:<input type="text" id="blxPIN">
-			<br>
-			<br>
-		</span>
-
-		<span id="blxInfoButtonSpan" style="display:none">
-			<button disabled id="blxInfoButton" onclick="blxMemoryInfo()">Memory Info</button>
-			Memory:<span id="blxMemory">-</span>
-			<br>
-			<br>
-		</span>
-
-		<span id="blxSyncButtonSpan" style="display:none">
-			<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
-			Delta(sec):<span id="blxSync">-</span>
-			<br>
-			<br>
-		</span>
-
-		<span id="blxUploadButtonSpan" style="display:none">
-			<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
-			<span id="blxGraph"> </span>
-			<br>
-			<br>
-		</span>
-
-		<!-- Span MEASURE for Loggers AND Sensors -->
-		<button disabled id="blxMeasureButton" onclick="blxMeasure()">Measure</button>
-		Values:<span id="blxMeasureData">-</span>
-		<br>
-		<br>
-
-		<span id="blxClearButtonSpan" style="display:none">
-			<button disabled id="blxClearButton" onclick="blxClear()">Clear Memory</button>
-			<br>
-			<br>
-		</span>
-
-		<span id="blxParametersSpan" style="display:none">
-			<button disabled id="blxParametersButton" onclick="blxParameters(true,0)">Device Parameter</button>
-			<button disabled id="blxSysParButton" onclick="blxParameters(true,1)">Device SysPar</button>
-			Parameters:<span id="blxParameterEdit">-</span>
-			<br>
-			<br>
-		</span>
-
-		Info: <span id="blxInfoLine">-</span><br>
-		State: <span id="blxStateText">Ready</span>(<span id="blxStateSpinner">-</span>)<br>
-		Result: <span id="blxCmdRes">-</span>
+<body style="font-family:arial; font-size:60%;">
+	<div class="w3-panel w3-indigo">
+		<h2>
+			<div>
+				<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
+				BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.55 / 28.04.2022</small>
+			</div>
+		</h2>
 	</div>
-	<hr>
-	List of known Devices: <button onclick="updateDeviceList()">Update</button>
-	<div id='blxDeviceList'></div>
-	<hr>
-	<button onclick="blx.setTerminal('blxTerminal')">Show Terminal</button>
-	<button onclick="blx.setTerminal()">Hide Terminal</button>
-	&nbsp;&nbsp;&nbsp;<button onclick="appSettings()">App Setup</button>
-	<div id="blxTerminal">
-		<!-- Element for BLE Terminal -->
+	<div class="w3-container w3-medium">
+		<div class="w3-container w3-margin-right">
+
+			<div>
+				<button id="blxConnectButton" onclick="blxConnect()">Connect</button>
+				Device:<span id="blxDevice">-</span>
+				MAC:<span id="blxMAC">-</span>
+				Type:<span id="blxType">-</span>
+				FW:V<span id="blxFW">-</span>
+				Sig.(dbm):<span id="blxSignal">-</span>
+				<br>
+				<br>
+
+				<span id="blxBadge" style="display:none">
+					<!-- print Badge only for Factory Setup-->
+					<button disabled id="blxBadgeButton" onclick="blxPrintBadge()"><i>Print Badge</i></button>
+					<br>
+					<br>
+				</span>
+
+				<span id="blxPinEnter" style="display:none">
+					<button id="blxSetPinButton" onclick="blxSetPin()">SetPIN</button>
+					PIN:<input type="text" id="blxPIN">
+					<br>
+					<br>
+				</span>
+
+				<span id="blxInfoButtonSpan" style="display:none">
+					<button disabled id="blxInfoButton" onclick="blxMemoryInfo()">Memory Info</button>
+					Memory:<span id="blxMemory">-</span>
+					<br>
+					<br>
+				</span>
+
+				<span id="blxSyncButtonSpan" style="display:none">
+					<button disabled id="blxSyncButton" onclick="blxSyncTime()">Synchronize Time</button>
+					Delta(sec):<span id="blxSync">-</span>
+					<br>
+					<br>
+				</span>
+
+				<span id="blxUploadButtonSpan" style="display:none">
+					<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
+					<span id="blxGraph"> </span>
+					<br>
+					<br>
+				</span>
+
+				<!-- Span MEASURE for Loggers AND Sensors -->
+				<button disabled id="blxMeasureButton" onclick="blxMeasure()">Measure</button>
+				Values:<span id="blxMeasureData">-</span>
+				<br>
+				<br>
+
+				<span id="blxClearButtonSpan" style="display:none">
+					<button disabled id="blxClearButton" onclick="blxClear()">Clear Memory</button>
+					<br>
+					<br>
+				</span>
+
+				<span id="blxParametersSpan" style="display:none">
+					<button disabled id="blxParametersButton" onclick="blxParameters(true,0)">Device Parameter</button>
+					<button disabled id="blxSysParButton" onclick="blxParameters(true,1)">Device SysPar</button>
+					Parameters:<span id="blxParameterEdit">-</span>
+					<br>
+					<br>
+				</span>
+
+				Info: <span id="blxInfoLine">-</span><br>
+				State: <span id="blxStateText">Ready</span>(<span id="blxStateSpinner">-</span>)<br>
+				Result: <span id="blxCmdRes">-</span>
+			</div>
+			<hr>
+			List of known Devices: <button onclick="updateDeviceList()">Update</button>
+			<div id='blxDeviceList'></div>
+			<hr>
+			<button onclick="blx.setTerminal('blxTerminal')">Show Terminal</button>
+			<button onclick="blx.setTerminal()">Hide Terminal</button>
+			&nbsp;&nbsp;&nbsp;<button onclick="appSettings()">App Setup</button>
+			<div id="blxTerminal">
+				<!-- Element for BLE Terminal -->
+			</div>
+			<hr>
+		</div>
 	</div>
-	<hr>
 </body>
 
 </html>
