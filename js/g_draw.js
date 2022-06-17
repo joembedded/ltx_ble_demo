@@ -10,7 +10,7 @@
 'use strict'
 
 // ------------------ Globals ----------------------
-var prgVersion = 'V1.20 (24.02.2022)'
+var prgVersion = 'V1.21 (21.06.2022)'
 var prgName = 'G-Draw EDT-Viewer ' + prgVersion
 var prgShortName = 'G-Draw'
 
@@ -299,10 +299,10 @@ function drawInnerGraph(ctx) {
       xdstr = 'Unknown'
     } else {
       if (gmtOffset !== null) { // Using UTC
-        xtstr = gds.toTimeString()
+        xtstr = gds.toTimeString() // Full "12:38:21 GMT+0200 (Mitteleuropäische Sommerzeit)"
         xdstr = gds.toDateString()
       } else { // Local Time
-        xtstr = gds.toLocaleTimeString()
+        xtstr = gds.toLocaleTimeString() // Compact "12:38:21"
         xdstr = gds.toLocaleDateString()
       }
       xtstr = xtstr.substr(0, 8) // Should be enough for time
@@ -1092,7 +1092,7 @@ function generateCSV(flags) {
         continue // Chan1: No Text
       }
       if (y.charAt(0) == '*' && (flags & 1)) y = y.substr(1) // No Alarms
-      if (flags & 4) y = y.replace('.', ',')
+      if (flags & 4)  y = y.replaceAll('.', ',')
       ltxt += y
     }
     ltxt += '\n'
@@ -1176,7 +1176,7 @@ function scanRawDataToVisibleData() {
           }
         } else if (ldata.startsWith('<NAME: ')) {
           sName = ldata.substr(7, ldata.length - 8) // Brackets
-        } else if (ldata.startsWith('<GMT: ')) {
+        } else if (ldata.startsWith('<GMT: ')) {  // Normally not used (= Long Format)
           gmtOffset = parseInt(ldata.substr(6))
           if (gmtOffset < -43200 || gmtOffset > 43200) {
             if (errmsg.length < 500) errmsg += 'ERROR' + mlid + " GMT Format:'" + ldata + "'\n"

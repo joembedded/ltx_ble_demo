@@ -13,7 +13,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=0.5">
 	<title>BLX-Template</title>
 
 	<script src="../filesaver/FileSaver.js"></script>
@@ -54,7 +54,7 @@
 
 
 			// Don't show Logger Buttons for "only" Sensors
-			if (blxDevice !== undefined && blxDevice.deviceType > 1000) dss = "block"
+			if (blxDevice !== undefined && blxDevice.deviceType >= 1000) dss = "block"
 			else dss = "none"
 
 			document.getElementById("blxSyncButtonSpan").style.display = dss
@@ -740,9 +740,6 @@
 			if (urlpar.badge !== undefined) { // Show Print Badge
 				document.getElementById("blxBadge").style.display = "block"
 			}
-			if (urlpar.pin !== undefined) { // Set Default Pin
-				document.getElementById("blxPIN").value = urlpar.pin
-			}
 			// blx.setTerminal("blxTerminal", bleCallback) // Initially Show Terminal in div 'blxTerminal'
 			blx.setTerminal(undefined, bleCallback) // Initially Hide Terminal in div 'blxTerminal'
 			setInterval(_blxBusyMonitor, 1000)
@@ -751,14 +748,12 @@
 	</script>
 </head>
 
-<body style="font-family:arial; font-size:60%;">
+<body style="font-family:arial; font-size:100%;">
 	<div class="w3-panel w3-indigo">
-		<h2>
-			<div>
+		<h4>
 				<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
-				BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.55 / 28.04.2022</small>
-			</div>
-		</h2>
+				BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.56 / 20.05.2022</small>
+		</h4>
 	</div>
 	<div class="w3-container w3-medium">
 		<div class="w3-container w3-margin-right">
