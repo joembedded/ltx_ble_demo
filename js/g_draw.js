@@ -10,7 +10,7 @@
 'use strict'
 
 // ------------------ Globals ----------------------
-var prgVersion = 'V1.21 (21.06.2022)'
+var prgVersion = 'V1.22 (21.06.2022)'
 var prgName = 'G-Draw EDT-Viewer ' + prgVersion
 var prgShortName = 'G-Draw'
 
@@ -751,11 +751,11 @@ function gi_mousemove(e) {
       xtstr += "<br><span style='background: " + colTab[colix] + "'> &nbsp; </span> &nbsp;"
       if (ki == ni) xtstr += '<b><u>'
       if (y.charAt(0) == '*') { // Alarm!
-        xtstr += "<span style='background: #FFC0FF'>" + (y.substr(1)) + ' &nbsp; ' + channelUnits[ki] + '(' + (ki - 2) + ')</span>'
+        xtstr += "<span style='background: #FFC0FF'>" + (y.substr(1)) + ' &nbsp; ' + channelUnits[ki] + '</span>'
       } else if (isNaN(y)) {
-        xtstr += "<span style='background: #FF8080'>" + y + ' &nbsp; ' + channelUnits[ki] + '(' + (ki - 2) + ')</span>'
+        xtstr += "<span style='background: #FF8080'>" + y + ' &nbsp; ' + channelUnits[ki] + '</span>'
       } else {
-        xtstr += y + ' &nbsp; ' + channelUnits[ki] + '(' + (ki - 2) + ')'
+        xtstr += y + ' &nbsp; ' + channelUnits[ki] 
       }
       if (ki == ni) xtstr += '</u></b>'
     }
@@ -1025,7 +1025,7 @@ function generateLegend() {
       ccol = (i - 2) % 16
     }
     $('#gButtons').append("<input id='check" + i + "' type='checkbox' " + cstr + " onclick='legendClick(" + i + ")'><span id='chan" + i + "' class='g-legcol' style='background: " +
-      colTab[ccol] + "'></span> " + channelUnits[i] + '(' + (i - 2) + ')<br>')
+      colTab[ccol] + "'></span> " + channelUnits[i] + '<br>') // + '(' + (i - 2) + ')<br>') // Opt. Index
   }
 
   document.getElementById('gEvents').checked = channelVisible[1]
@@ -1214,6 +1214,7 @@ function scanRawDataToVisibleData() {
               if (errmsg.length < 500) errmsg += 'ERROR' + mlid + " ChannelNo:'" + ldata + "'\n"
               break
             }
+
             if (typeof physChanCnt[kvn] === 'undefined') physChanCnt[kvn] = 0
             physChanCnt[kvn]++
           }
@@ -1237,8 +1238,12 @@ function scanRawDataToVisibleData() {
       if (channelVisible[totalUsedChannels] === undefined) {
         channelVisible[totalUsedChannels] = true
       }
-      var newunit = physChanUnits[x] // Save Units
-      channelUnits[totalUsedChannels] = newunit
+      // x: ChannelIdx
+      var unitstr 
+      if(x>=90) unitstr = "HK"+x+": " +  physChanUnits[x] // Save Units // Look similar to BlueShell
+      else unitstr = "#"+x+": " + physChanUnits[x]
+      
+      channelUnits[totalUsedChannels] = unitstr;
       mapPhys2Log[x] = totalUsedChannels++
     }
   }
