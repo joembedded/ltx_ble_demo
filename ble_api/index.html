@@ -665,13 +665,18 @@
 					document.getElementById("blxSignal").textContent = v
 					m = undefined // DontShow
 					break
-				case 'MSG':
+				case 'INFO': // no v
+					document.getElementById("blxInfoLine").textContent = xinfo
+					break
+
+					case 'MSG':
 					document.getElementById("blxInfoLine").textContent = "MSG " + v + ":" + xinfo
 					break
 				case 'WARN':
 					document.getElementById("blxCmdRes").textContent = "WARNING " + v + ":" + xinfo
 					break
-				case 'ERR':
+
+					case 'ERR':
 					document.getElementById("blxCmdRes").textContent = "ERROR " + v + ":" + xinfo
 					break
 				case 'BZY':
@@ -680,10 +685,11 @@
 
 					// Measure Header
 				case 'MEAS_CH':
-					measureData = "\nChannels:" + v
+					if (v > 0) measureData = "\nChannels:" + v
+					else measureData = "\nMeasure..."
 					break
 				case 'MEAS_T':
-					measureData += " (Wait Max:" + v / 1000 + " sec)"
+					if (v > 0) measureData += " (Wait Max:" + v / 1000 + " sec)"
 					document.getElementById("blxMeasureData").innerHTML = measureData + "<br>..."
 					break
 					// Measure Values (later)
@@ -751,8 +757,8 @@
 <body style="font-family:arial; font-size:100%;">
 	<div class="w3-panel w3-indigo">
 		<h4>
-				<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
-				BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.56 / 20.05.2022</small>
+			<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
+			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.58 / 18.11.2022</small>
 		</h4>
 	</div>
 	<div class="w3-container w3-medium">
