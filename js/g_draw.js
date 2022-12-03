@@ -1355,7 +1355,7 @@ function scanRawDataToVisibleData() {
             }
           }
           lux_sec = unixsec
-          if (unixsec < 1526030617 || unixsec >= 0x7FFFFFFF) {
+          if (unixsec < 1526030617 || unixsec >= 0xF0000000) { // 2097
             strangeTimesCnt++ // Error later
           }
           linevals[0] = unixsec * 1000 // Time in msec
