@@ -1240,7 +1240,7 @@ function scanRawDataToVisibleData() {
       }
       // x: ChannelIdx
       var unitstr 
-      if(x>=90) unitstr = "HK"+x+": " +  physChanUnits[x] // Save Units // Look similar to BlueShell
+      if(x>=90) unitstr = "H"+x+": " +  physChanUnits[x] // Save Units // Look similar to BlueShell
       else unitstr = "#"+x+": " + physChanUnits[x]
       
       channelUnits[totalUsedChannels] = unitstr;
