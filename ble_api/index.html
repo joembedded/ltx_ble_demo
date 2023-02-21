@@ -665,11 +665,15 @@
 					document.getElementById("blxSignal").textContent = v
 					m = undefined // DontShow
 					break
+				case 'VSENS': // Special Sensor data, e.g. Acceleration, see Docu
+					document.getElementById("blxInfoLine").textContent = "VSENS "+ xinfo + ": " +v
+					m = undefined // DontShow
+					break
 				case 'INFO': // no v
 					document.getElementById("blxInfoLine").textContent = xinfo
 					break
 
-					case 'MSG':
+				case 'MSG':
 					document.getElementById("blxInfoLine").textContent = "MSG " + v + ":" + xinfo
 					break
 				case 'WARN':
@@ -758,7 +762,7 @@
 	<div class="w3-panel w3-indigo">
 		<h4>
 			<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
-			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.58 / 18.11.2022</small>
+			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.59 / 19.02.2023</small>
 		</h4>
 	</div>
 	<div class="w3-container w3-medium">
