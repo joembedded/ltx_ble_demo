@@ -10,7 +10,7 @@
 'use strict'
 
 // ------------------ Globals ----------------------
-var prgVersion = 'V1.22 (21.06.2022)'
+var prgVersion = 'V1.50 (20.03.2023)'
 var prgName = 'G-Draw EDT-Viewer ' + prgVersion
 var prgShortName = 'G-Draw'
 
@@ -115,6 +115,10 @@ var dragCnt = 0
 // MessageBox Visible or DragNDrop visible
 var msgVisible = 0
 var legMenuVisible = false // For small Display
+
+// Fuer decoder
+let deltatime = 0
+let lux_sec = 0;
 
 // --------------------------- Functions ----------------------------------
 
@@ -755,7 +759,7 @@ function gi_mousemove(e) {
       } else if (isNaN(y)) {
         xtstr += "<span style='background: #FF8080'>" + y + ' &nbsp; ' + channelUnits[ki] + '</span>'
       } else {
-        xtstr += y + ' &nbsp; ' + channelUnits[ki] 
+        xtstr += y + ' &nbsp; ' + channelUnits[ki]
       }
       if (ki == ni) xtstr += '</u></b>'
     }
@@ -1092,7 +1096,7 @@ function generateCSV(flags) {
         continue // Chan1: No Text
       }
       if (y.charAt(0) == '*' && (flags & 1)) y = y.substr(1) // No Alarms
-      if (flags & 4)  y = y.replaceAll('.', ',')
+      if (flags & 4) y = y.replaceAll('.', ',')
       ltxt += y
     }
     ltxt += '\n'
@@ -1100,6 +1104,92 @@ function generateCSV(flags) {
 
   return ltxt
 }
+
+// Base64-Stuff -START- Padding not required in JS and PHP
+function decodeB64Str(b64str) {
+  let rstr = '!'
+  try {
+    rstr += lux_sec
+    let bbuf = Uint8Array.from(atob(b64str), c => c.charCodeAt(0))
+    let alarmflag = false
+    for (let idx = 0; idx < bbuf.length;) {
+      let tokan = bbuf[idx++] // Token/Kanal
+      if (tokan < 90) { // JS: Shift causes Sign Overflow for Bit31(!!!)
+        rstr += ' ' + tokan + ':'
+        let bm = bbuf[idx++]  // Could mark Err
+        if (bm == 0xFD) {
+          let errno = (bbuf[idx++] * 65536) + (bbuf[idx++] * 256) + bbuf[idx++]
+          rstr += getErrstr(errno)
+        } else {
+          let binval = bm * 16777216 + (bbuf[idx++] * 65536) + (bbuf[idx++] * 256) + bbuf[idx++]
+          if (alarmflag) rstr += '*'
+          let numstr = (1 * decodeF32(binval).toPrecision(7)) // Tricky remove of trailing 0
+          rstr += numstr;
+        }
+        alarmflag = false
+      } else if (tokan == 110) {
+        alarmflag = true // Gilt nur einmal
+      } else if (tokan == 111) {
+        deltatime = (bbuf[idx++] * 256) + bbuf[idx++];
+        //rstr += "(Dt:"+deltatime+")"
+        if (deltatime == 0 || deltatime >= 43200) throw "IllegalDeltatime"
+      } else {
+        throw "IllegalTokan(" + tokan + ")"
+      }
+    }
+    lux_sec += deltatime
+  } catch (err) {
+    var estr = err.toString();
+    if (estr.length > 40) estr = estr.substr(0, 40) + '...';
+    rstr = "B64-Decode ERROR! " + estr
+  }
+  return rstr
+}
+
+function decodeF32(bin) // U32 -> Float IEEE 754
+{
+  let sign = (bin & 0x80000000) > 0 ? -1 : 1
+  let exp = ((bin & 0x7F800000) >> 23)
+  let mantis = (bin & 0x7FFFFF)
+
+  if (mantis == 0 && exp == 0) {
+    return 0
+  }
+  if (exp == 255) {
+    if (mantis == 0) return Infinity
+    if (mantis != 0) return NaN
+  }
+
+  if (exp == 0) { // denormalisierte Zahl
+    mantis /= 0x800000
+    return sign * Math.pow(2, -126) * mantis
+  } else {
+    mantis |= 0x800000
+    mantis /= 0x800000
+    return sign * Math.pow(2, exp - 127) * mantis
+  }
+}
+
+function getErrstr(errno) {
+  switch (errno) {
+    case 1:
+      return "NoValue"
+    case 2:
+      return "NoReply"
+    case 3:
+      return "OldValue"
+      // 4,5
+    case 6:
+      return "ErrorCRC"
+    case 7:
+      return "DataError"
+    case 8:
+      return "NoCachedValue"
+    default:
+      return "Err" + errno;
+  }
+}
+// Base64-Stuff -END-
 
 // Analyse raw Data in 2 passes and find inMin/inMax
 function scanRawDataToVisibleData() {
@@ -1132,11 +1222,13 @@ function scanRawDataToVisibleData() {
   var mlid
   var loclen
 
+  lux_sec = 0 // last UNIX seconds
+  deltatime = 0
   // *** PASS 1: find the used channels and preset Units ***
   for (var i = 0; i < dataAnzRaw; i++) {
     loc = dataLinesRaw[i]
     loclen = loc.length
-    // console.log("LineP1 "+i+" '"+loc+"'("+loclen+")");
+    //console.log("LineP1 "+i+" '"+loc+"'("+loclen+")"); // **TEST**
     if (loclen < 1) {
       continue
     }
@@ -1145,6 +1237,15 @@ function scanRawDataToVisibleData() {
       continue
     }
     var c0 = loc.charAt(0)
+    var c00 = c0 // Save wg. timescan
+    if (c0 == '$') { // Decompress Line and replace in incomming data
+      //console.log("LineComp " + i + " '" + loc + "'"); // **TEST**
+      loc = decodeB64Str(loc.substr(1))
+      //console.log(lux_sec,deltatime,"-> '" + loc + "'")
+
+      dataLinesRaw[i] = loc;
+      c0 = '!' // Continue with decomrpessed line
+    }
     if (c0 == '<' || c0 == '!') { // EDT-Fomrat either ! or <
       lno = i
       ldata = loc
@@ -1176,7 +1277,7 @@ function scanRawDataToVisibleData() {
           }
         } else if (ldata.startsWith('<NAME: ')) {
           sName = ldata.substr(7, ldata.length - 8) // Brackets
-        } else if (ldata.startsWith('<GMT: ')) {  // Normally not used (= Long Format)
+        } else if (ldata.startsWith('<GMT: ')) { // Normally not used (= Long Format)
           gmtOffset = parseInt(ldata.substr(6))
           if (gmtOffset < -43200 || gmtOffset > 43200) {
             if (errmsg.length < 500) errmsg += 'ERROR' + mlid + " GMT Format:'" + ldata + "'\n"
@@ -1206,6 +1307,16 @@ function scanRawDataToVisibleData() {
             physChanUnits[kvn] = kv[1] // Save last used units
           }
         } else {
+          if(c00 != '$'){ // Prevent 2.nd scan
+          var lts0
+          lts0 = vals[0].substr(1) // Local Time String
+          if (lts0.charAt(0) == '+') {
+            deltatime = parseInt(lts0)
+            lux_sec += deltatime
+          } else {
+            lux_sec = parseInt(lts0)
+          }
+        }
           for (ii = 1; ii < valn; ii++) { // Without !U
             // Split in Index:Value UNITS
             kv = vals[ii].split(':')
@@ -1239,10 +1350,10 @@ function scanRawDataToVisibleData() {
         channelVisible[totalUsedChannels] = true
       }
       // x: ChannelIdx
-      var unitstr 
-      if(x>=90) unitstr = "H"+x+": " +  physChanUnits[x] // Save Units // Look similar to BlueShell
-      else unitstr = "#"+x+": " + physChanUnits[x]
-      
+      var unitstr
+      if (x >= 90) unitstr = "H" + x + ": " + physChanUnits[x] // Save Units // Look similar to BlueShell
+      else unitstr = "#" + x + ": " + physChanUnits[x]
+
       channelUnits[totalUsedChannels] = unitstr;
       mapPhys2Log[x] = totalUsedChannels++
     }
@@ -1250,7 +1361,7 @@ function scanRawDataToVisibleData() {
   // txt+="\nTotal used: "+totalUsedChannels+"\n";
 
   /** * PASS 2: Fill data Errors always: 'ERROR: Line:xxx ...' xxx Sourceline */
-  var lux_sec = 0 // last UNIX seconds
+  lux_sec = 0 // last UNIX seconds
   for (i = 0; i < dataAnzRaw; i++) {
     var linevals = []
     loc = dataLinesRaw[i]
@@ -1425,6 +1536,9 @@ function scanRawDataToVisibleData() {
 
   inMin0 = inMin // Save computed Maxima
   inMax0 = inMax
+
+  //for(let idx=0;idx<inIdxMax;idx++) console.log(timeVals[idx]) // Check
+  //for(let idx=0;idx<dataLinesRaw.length;idx++) console.log(dataLinesRaw[idx]) // Check
 
   // errmsg be displayed, else return 'undefinde'
   if (strangeTimesCnt && errmsg.length < 500) errmsg += 'WARNING: Unknown Times (' + strangeTimesCnt + ') Lines'
