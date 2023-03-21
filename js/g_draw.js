@@ -10,7 +10,7 @@
 'use strict'
 
 // ------------------ Globals ----------------------
-var prgVersion = 'V1.50 (20.03.2023)'
+var prgVersion = 'V1.51 (21.03.2023)'
 var prgName = 'G-Draw EDT-Viewer ' + prgVersion
 var prgShortName = 'G-Draw'
 
@@ -1107,9 +1107,8 @@ function generateCSV(flags) {
 
 // Base64-Stuff -START- Padding not required in JS and PHP
 function decodeB64Str(b64str) {
-  let rstr = '!'
+  let rstr = '' // Zeit erst einbauen wenn Deltazeit bekannt
   try {
-    rstr += lux_sec
     let bbuf = Uint8Array.from(atob(b64str), c => c.charCodeAt(0))
     let alarmflag = false
     for (let idx = 0; idx < bbuf.length;) {
@@ -1132,16 +1131,18 @@ function decodeB64Str(b64str) {
       } else if (tokan == 111) {
         deltatime = (bbuf[idx++] * 256) + bbuf[idx++];
         //rstr += "(Dt:"+deltatime+")"
-        if (deltatime == 0 || deltatime >= 43200) throw "IllegalDeltatime"
       } else {
         throw "IllegalTokan(" + tokan + ")"
       }
     }
-    lux_sec += deltatime
+    if (deltatime == 0 || deltatime >= 43200) throw "IllegalDeltatime"
+    lux_sec += deltatime  
+    rstr = '!'+lux_sec.toString()+rstr
+
   } catch (err) {
     var estr = err.toString();
     if (estr.length > 40) estr = estr.substr(0, 40) + '...';
-    rstr = "B64-Decode ERROR! " + estr
+    rstr = "<ERROR: Base64-Decode: " + estr+">"
   }
   return rstr
 }
@@ -1307,7 +1308,7 @@ function scanRawDataToVisibleData() {
             physChanUnits[kvn] = kv[1] // Save last used units
           }
         } else {
-          if(c00 != '$'){ // Prevent 2.nd scan
+          if(c00 != '$'){ // 2.nd scan of same line not required
           var lts0
           lts0 = vals[0].substr(1) // Local Time String
           if (lts0.charAt(0) == '+') {
