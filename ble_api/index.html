@@ -699,6 +699,9 @@
 					break
 					// Measure Values (later)
 				case 'MEAS_V':
+					if(xinfo[0] == '*'){
+						xinfo = '(ALARM) ' + xinfo.substring(1)
+					}
 					if (v == 90 && blxDevice.sys_param !== undefined && blxDevice.sys_param[16] !== undefined) {
 						const ulow = parseFloat(blxDevice.sys_param[15])
 						const uhigh = parseFloat(blxDevice.sys_param[16])
@@ -763,7 +766,7 @@
 	<div class="w3-panel w3-indigo">
 		<h4>
 			<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
-			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.60 / 27.03.2023</small>
+			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.61 / 08.05.2023</small>
 		</h4>
 	</div>
 	<div class="w3-container w3-medium">
