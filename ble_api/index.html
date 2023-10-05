@@ -232,8 +232,9 @@
 
 		//*********** Parameter-Edit START ******************
 		// Description and Index of Parameters, see 'legacy/edit_lxp.php'
-		// !!! IN Strings '@' is not allowed at Pos 0 (replaced by '?') !!!
-		// !!! '#' is treated as Remark-Separator (replaced by '?') !!!
+		// In strings '@' is not allowed at Pos 0 (replaced by '?')
+		// '#' is treated as Remark-Separator (replaced by '?')
+		// '$' for Len of strings (e.g. $11: 11 chars)
 		const p100_beschr = [
 			"*@100_System",
 			"*DEVICE_TYP",
@@ -253,7 +254,8 @@
 			"Net_Mode (0:Off 1:OnOff 2:On_5min 3:Online)",
 			"ErrorPolicy (O:None 1:RetriesForAlarms, 2:RetriesForAll)",
 			"MinTemp_oC[-40..10]",
-			"Config0_U31 (B0-B30)",
+			"Config0_U31 (B0:OffPer.Inet:On/Off B1,2:BLE:On/Mo/Li/MoLi B3:LiWake:Off/On B4:CE:Off/On B5:Live:Off/On)",
+			"Configuration_Command[$79]",
 		]
 		const pkan_beschr = [
 			"*@ChanNo",
@@ -766,7 +768,7 @@
 	<div class="w3-panel w3-indigo">
 		<h4>
 			<img style="vertical-align:middle" src="BlxIcon.png">&nbsp;&nbsp;&nbsp;
-			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.61 / 08.05.2023</small>
+			BLX.JS-Template &nbsp;&nbsp;&nbsp;<small>V0.63 / 05.10.2023</small> 
 		</h4>
 	</div>
 	<div class="w3-container w3-medium">
@@ -829,7 +831,7 @@
 					<br>
 				</span>
 
-				<span id="blxParametersSpan" style="display:none">
+				<span id="blxParametersSpan" style="display:none; white-space: nowrap;">
 					<button disabled id="blxParametersButton" onclick="blxParameters(true,0)">Device Parameter</button>
 					<button disabled id="blxSysParButton" onclick="blxParameters(true,1)">Device SysPar</button>
 					Parameters:<span id="blxParameterEdit">-</span>

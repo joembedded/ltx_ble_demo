@@ -52,4 +52,5 @@ Only these files in 'ble_api/' are necessary:
 - V1.01 08.12.2020 Initial
 - V1.50 09.01.2021 Added iOS Polyfill
 - V1.90 01.08.2021 Added OSX Sensors in HTML
+- V1.91 05.10.2023 Added CommandConfig as new Parameter in 'iparam.lxp'
 
