@@ -1051,9 +1051,13 @@ function generateCSV(flags) {
   if (!(flags & 2)) ltxt = 'MAC: ' + sMac + ' Name: ' + sName + ' Lines:' + anzl + ' Channels:' + (totalUsedChannels - 2) + '\n'
 
   if (gmtOffset !== null) {
-    ltxt += 'Times: GMT'
-    if (gmtOffset >= 0) ltxt += '+'
-    ltxt += (gmtOffset / 3600) + '\n'
+    var hx = 'GMT'
+    if (gmtOffset >= 0) hx += '+'
+    hx += (gmtOffset / 3600) + '\n'
+    channelUnits[0] = 'Time(' + hx + ')'
+    ltxt += 'Times:' + hx
+  } else {
+    channelUnits[0] = 'Time(local)'
   }
 
   for (var i = 0; i < totalUsedChannels; i++) {
@@ -1136,13 +1140,13 @@ function decodeB64Str(b64str) {
       }
     }
     if (deltatime == 0 || deltatime >= 43200) throw "IllegalDeltatime"
-    lux_sec += deltatime  
-    rstr = '!'+lux_sec.toString()+rstr
+    lux_sec += deltatime
+    rstr = '!' + lux_sec.toString() + rstr
 
   } catch (err) {
     var estr = err.toString();
     if (estr.length > 40) estr = estr.substr(0, 40) + '...';
-    rstr = "<ERROR: Base64-Decode: " + estr+">"
+    rstr = "<ERROR: Base64-Decode: " + estr + ">"
   }
   return rstr
 }
@@ -1179,7 +1183,7 @@ function getErrstr(errno) {
       return "NoReply"
     case 3:
       return "OldValue"
-      // 4,5
+    // 4,5
     case 6:
       return "ErrorCRC"
     case 7:
@@ -1308,16 +1312,16 @@ function scanRawDataToVisibleData() {
             physChanUnits[kvn] = kv[1] // Save last used units
           }
         } else {
-          if(c00 != '$'){ // 2.nd scan of same line not required
-          var lts0
-          lts0 = vals[0].substr(1) // Local Time String
-          if (lts0.charAt(0) == '+') {
-            deltatime = parseInt(lts0)
-            lux_sec += deltatime
-          } else {
-            lux_sec = parseInt(lts0)
+          if (c00 != '$') { // 2.nd scan of same line not required
+            var lts0
+            lts0 = vals[0].substr(1) // Local Time String
+            if (lts0.charAt(0) == '+') {
+              deltatime = parseInt(lts0)
+              lux_sec += deltatime
+            } else {
+              lux_sec = parseInt(lts0)
+            }
           }
-        }
           for (ii = 1; ii < valn; ii++) { // Without !U
             // Split in Index:Value UNITS
             kv = vals[ii].split(':')
@@ -1676,7 +1680,7 @@ function loadClassic() {
     reader.onerror = function (event) {
       ownAlert('ERROR: Import Data! (' + selectedFile + ')', 15)
     }
-    reader.readAsText(file /*, 'cp1252'*/ ) // Def. UTF-8
+    reader.readAsText(file /*, 'cp1252'*/) // Def. UTF-8
 
   }
   fs_input.click()
@@ -1713,7 +1717,7 @@ function dropfile(evt) {
   reader.onerror = function (event) {
     ownAlert('ERROR: Import Data! (' + selectedFile + ')', 15)
   }
-  reader.readAsText(selectedFile /*, 'cp1252'*/ ) // Def. UTF-8
+  reader.readAsText(selectedFile /*, 'cp1252'*/) // Def. UTF-8
 }
 
 function handleDrag(evt) {
