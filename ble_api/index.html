@@ -254,7 +254,7 @@
 			"Net_Mode (0:Off 1:OnOff 2:On_5min 3:Online)",
 			"ErrorPolicy (O:None 1:RetriesForAlarms, 2:RetriesForAll)",
 			"MinTemp_oC[-40..10]",
-			"Config0_U31 (B0:OffPer.Inet:On/Off B1,2:BLE:On/Mo/Li/MoLi B3:LiWake:Off/On B4:CE:Off/On B5:Live:Off/On)",
+			"Config0_U31 (B0:OffPer.Inet:On/Off B1,2:BLE:On/Mo/Li/MoLi B3:EnDS B4:CE:Off/On B5:Live:Off/On)",
 			"Configuration_Command[$79]",
 		]
 		const pkan_beschr = [
@@ -813,7 +813,7 @@
 				</span>
 
 				<span id="blxUploadButtonSpan" style="display:none">
-					<button disabled id="blxUploadButton" onclick="blxUpload()">Upload Data</button>
+					<button disabled id="blxUploadButton" onclick="blxUpload()">Load Data from Device</button>
 					<span id="blxGraph"> </span>
 					<br>
 					<br>
