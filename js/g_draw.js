@@ -10,7 +10,7 @@
 'use strict'
 
 // ------------------ Globals ----------------------
-var prgVersion = 'V1.52 (16.10.2023)'
+var prgVersion = 'V1.53 (01.02.2024)'
 var prgName = 'G-Draw EDT-Viewer ' + prgVersion
 var prgShortName = 'G-Draw'
 
@@ -1151,9 +1151,9 @@ function decodeB64Str(b64str) {
   return rstr
 }
 
-function decodeF32(bin) // U32 -> Float IEEE 754
+function decodeF32(bin) // U32 -> Float IEEE 754 Achtung!!!JS: (0x80000000 & 0x80000000) = -2147483648
 {
-  let sign = (bin & 0x80000000) > 0 ? -1 : 1
+  let sign = (bin >= 0x80000000) ? -1 : 1
   let exp = ((bin & 0x7F800000) >> 23)
   let mantis = (bin & 0x7FFFFF)
 
