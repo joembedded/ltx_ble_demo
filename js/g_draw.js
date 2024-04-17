@@ -10,7 +10,7 @@
 'use strict'
 
 // ------------------ Globals ----------------------
-var prgVersion = 'V1.53 (01.02.2024)'
+var prgVersion = 'V1.54 (17.04.2024)'
 var prgName = 'G-Draw EDT-Viewer ' + prgVersion
 var prgShortName = 'G-Draw'
 
@@ -1237,7 +1237,7 @@ function scanRawDataToVisibleData() {
     if (loclen < 1) {
       continue
     }
-    if (loclen > 256) {
+    if (loclen > 2048) {
       if (errmsg.length < 500) errmsg += 'ERROR: Line:' + i + " Too long:'" + (loc.substr(0, 80)) + "...'\n"
       continue
     }
@@ -1375,7 +1375,7 @@ function scanRawDataToVisibleData() {
       continue
     }
     //console.log("LineP2 "+i+" '"+loc+"'("+loclen+")");
-    if (loclen > 256) {
+    if (loclen > 2048) {
       // if(errmsg.length<500) errmsg+="ERROR: Line:"+i+" Too long:'"+(loc.substr(0,80))+"...'\n";
       continue
     }
