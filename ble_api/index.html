@@ -14,9 +14,8 @@ Ein Dashboard fuer LTX Data Logger als PWA
     <meta property="og:description" content="Dashboard for LTX Data Loggers with BLE, LTE, LTE-M, LTE-NB, Satellite, ..." />
     <meta name="description" content="Dashboard for LTX Data Loggers with BLE, LTE, LTE-M, LTE-NB, Satellite, ..." />
 
-    <!-- Pfad 'preview' zeigt in Release immer auf volle URL (nur dann als Link immer korrekt darstellbar) 
-     https://de.ryte.com/magazine/open-graph-tags/ (Empfehlung 600x315 Pixel, Achtung: tweilweise geclippt! )-->
-    <meta property="og:image" content="https://joembedded.github.io/ltx_ble_demo/ble_api/static/preview600x315.png" />
+    <!-- Pfad 'preview' zeigt in Release immer auf volle URL (nur dann als Link-Preview-Bild immer korrekt darstellbar) -->
+    <meta property="og:image" content="https://joembedded.github.io/ltx_ble_demo/ble_api/static/preview1024x768.png" />
 
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#0000FF">
@@ -34,7 +33,7 @@ Ein Dashboard fuer LTX Data Logger als PWA
     <script>
 
         window.jdDebug = 0 // PWA-global - DebugLevel: 0:Run, 1-2:Debug: 1:LocalhostDev,NoQRScannerPolyfill, 2: Debug,ScannerPolyfill
-        if (location.hostname == 'localhost' || location.hostname == '127.0.0.1') window.jdDebug = 2 // DEBUG-local
+        if (location.hostname == 'localhost' || location.hostname == '127.0.0.1') window.jdDebug = 0 // DEBUG-local
 
         function installServiceWorker() {
             if ('serviceWorker' in navigator) {
@@ -273,8 +272,9 @@ Ein Dashboard fuer LTX Data Logger als PWA
 
         <!-- Rechte Teile im Footer wie im Header -->
         <footer class="jo-menu-footer">
+
             <div>
-                <span id="bd-online" style="color: var(--lime);"><i class="bi-link"></i>
+                <span id="bd-online" hidden style="color: var(--lime);"><i class="bi-link"></i>
                     Online</span>
                 <span id="bd-offline" hidden style="color: var(--red);"><i class="bi-ban"></i>
                     Offline</span>
@@ -282,15 +282,15 @@ Ein Dashboard fuer LTX Data Logger als PWA
 
             <!-- Debug-Button einfach mal da, bei Bedarf aktivieren -->
             <button hidden id="button-debug">(DEBUG)</button>
+
+            <!-- Buttun MUSS 'joInstallApp' heissen! Wird per Default von CSS zu hidden -->
+            <button id="joInstallApp" data-ll="Install APP">Install APP</button>
+
             <span class="jo-menu-right">
                 <span id="bd-version" class="jo-font-small">x.xx xx.xx.xxxx</span>
             </span>
         </footer>
     </div>
-
-    <!-- Hier Platz fuer Test-Dialoge, die spaeter dann dynamisch werden koennen
-    <dialog id="testDialog">
-    </dialog> -->
 
 </body>
 

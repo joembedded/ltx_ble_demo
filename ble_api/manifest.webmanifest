@@ -7,20 +7,39 @@
 	"theme_color": "#0000FF",
 	"display": "standalone",
 	"orientation": "any",
-	"scope": "/",
-	"start_url": ".",
+	"scope": "./",
+	"start_url": "./",
+	"id": "blxdash001",
+	"categories": [
+		"education",
+		"business"
+	],
 	"icons": [
-		{
-			"src": "./static/preview.png",
-			"type": "image/png",
-			"sizes": "256x256",
-			"purpose": "maskable"
-		},
 		{
 			"src": "./static/preview512.png",
 			"type": "image/png",
 			"sizes": "512x512",
 			"purpose": "maskable"
+		},
+		{
+			"src": "./static/preview512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"screenshots": [
+		{
+			"src": "./static/preview512.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"label": "Preview512x512"
+		},
+		{
+			"src": "./static/preview1024x768.png",
+			"sizes": "1024x768",
+			"type": "image/png",
+			"form_factor": "wide",
+			"label": "Preview1024x768"
 		}
 	]
 }

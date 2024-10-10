@@ -76,8 +76,23 @@ input[type=checkbox] {
     vertical-align: -0.125em; 
 }
 
+/* Fuer PWA: Hide Install button 'joInstallApp' until beforeinstallprompt fires */
+#joInstallApp { 
+    display: none;
+  }
 
 /* === Ein paar Animationen fuer die icons. Verwendung durch setzen der Klasse === */
+
+.jo-icon-ani-blink::before {
+    position: relative;
+    animation: joanblink 1s steps(2) infinite;
+}
+@keyframes joanblink {
+    0% {
+        opacity: 20%;
+    } 
+  }
+
 /* Icon in Uhrzeiger rotieren */
 .jo-icon-ani-rotate::before {
     position: relative;
