@@ -8,7 +8,11 @@ _(Unfortunately the Web Bluetooth API is still not fully available on Safari (iO
 
 !['Some Screenshots of the LTX BLE Demo (old Version)'](./docs/ble_all.jpg "Some Screenshots of the LTX BLE Demo")
 
-It is even not necessary to install any native APPs! The complete software is nothing else, than a _„Simple Web page“_, that can work even offline (as PWA)! Extremely convenient and safe!
+It is even not necessary to install any 'native APP'! The complete software is nothing else, than a _„Simple Web page“_, that can work even offline (as PWA)! Extremely convenient and safe!
+
+### Installation as PWA (for offline use):
+- On Android smartphones: Select 'Add to home screen'
+- On desktop PCs: In the browser, select the 3-dot menu (right side): 'Stream, save, share' -> 'Install as APP'
 
 These are 3 sample devices:
 !['LTX BLE E-Paper'](./docs/epa_logger2.jpg "LTX BLE E-Paper")
