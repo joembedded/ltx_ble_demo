@@ -1,0 +1,26 @@
+{
+	"lang": "en-EN",
+	"name": "BlxDashboard",
+	"short-name": "BlxDashboard",
+	"description": "Dashboard for LTX Data Loggers with BLE, LTE, LTE-M, LTE-NB, Satellite, ...",
+	"background_color": "#808080",
+	"theme_color": "#0000FF",
+	"display": "standalone",
+	"orientation": "any",
+	"scope": "/",
+	"start_url": ".",
+	"icons": [
+		{
+			"src": "./static/preview.png",
+			"type": "image/png",
+			"sizes": "256x256",
+			"purpose": "maskable"
+		},
+		{
+			"src": "./static/preview512.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "maskable"
+		}
+	]
+}

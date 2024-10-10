@@ -1,2 +1,303 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head><meta http-equiv=Refresh content="0;url=/blx/ble_api/"></head></html>
+<!DOCTYPE html>
+<!-- BlxDashboard  - Ein Dashboard fuer LTX Logger als PWA
+(C) JoEmbedded.de
+-->
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta meta property="og:title" content="BlxDashboard" />
+    <meta property="og:description" content="Dashboard for LTX Data Loggers with BLE, LTE, LTE-M, LTE-NB, Satellite, ..." />
+    <meta name="description" content="Dashboard for LTX Data Loggers with BLE, LTE, LTE-M, LTE-NB, Satellite, ..." />
+
+    <!-- Pfad 'preview' zeigt in Release immer auf volle URL (nur dann als Link immer korrekt darstellbar) 
+     https://de.ryte.com/magazine/open-graph-tags/ (Empfehlung 600x315 Pixel, Achtung: tweilweise geclippt! )-->
+    <meta property="og:image" content="https://joembedded.github.io/jodash2/appdist/static/preview600x315.png" />
+
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0000FF">
+    <!-- - App Icon entweder als Icon or SVG: -->
+    <link rel="icon" type="image/svg+xml" href="./static/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="./static/favicon.ico">
+
+    <!-- IconListe: https://icons.getbootstrap.com/#icons -->
+    <link rel="stylesheet" href="./static/icons/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="./css/jodash.css">
+    <link rel="stylesheet" href="./css/qrscanner.css">
+
+    <!-- Zuallererst Debug und Service Worker -->
+    <script>
+
+        window.jdDebug = 0 // PWA-global - DebugLevel: 0:Run, 1-2:Debug: 1:LocalhostDev,NoQRScannerPolyfill, 2: Debug,ScannerPolyfill
+        if (location.hostname == 'localhost' || location.hostname == '127.0.0.1') window.jdDebug = 0 // DEBUG-local
+
+        function installServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').then(function (reg) {
+                    console.log("ServiceWorker installed")
+                }).catch(function (error) {
+                    console.log("ERROR: ServiceWorker: " + error)
+                })
+            }
+        }
+        // Unregister Service Workers (run manually in Console)
+        function removeServiceWorker() {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister()
+                }
+            })
+            console.log("ServiceWorker removed")
+        }
+
+        if (!window.jdDebug) installServiceWorker()
+        else removeServiceWorker() 
+    </script>
+    <!-- Nun erst Hauptscript -->
+    <script src="./js/blxdash.js" defer type="module"></script>
+
+    <title>BlxDashboard</title>
+</head>
+
+<body>
+
+    <div class="jo-vcontainer">
+
+        <header class="jo-menu-header">
+            <span class="jo-main-hamb"> <!-- Main Hambuger mit Indicator -->
+                <i class="bi-list"></i>
+                <span class="jo-main-hambind">
+                    <i class="bi-caret-right-fill"></i>
+                </span>
+            </span>
+            &nbsp;&nbsp;
+            <!-- Headerzeile - mit Test fuer die Internationalisierung (intmain_i18n.js) -->
+            <span>BlxDashboard</span>  &nbsp;&nbsp;<span class="jo-font-small"> Preview </span>
+
+            <!-- Positionerung rechts ims Menue, das selbe geht auch im Footer  -->
+            <span class="jo-menu-right">
+                
+                <!-- 
+                <i class="bi-translate jo-icon-ani-beat"></i>
+                :'<span data-ll="Language">?</span>', 
+                <i class="bi-megaphone"></i>
+                :'<span data-ll="Greeting">?</span>' 
+                <i class="bi-heart-fill jo-icon-ani-beat neonEffectRed"></i>
+                <a href="https://www.xxx.org/" class="blebluelight jo-font-small">by XXX</a>
+                -->
+
+                &nbsp;
+            </span>
+        </header>
+
+        <div class="jo-chcontent">
+
+            <div class="jo-sidebarcontent">
+                <!-- Navigation Sidebar START -->
+                <nav class="jo-sidebar">
+                    <div data-ll="Menu" class="jo-sinavinfo">Menu</div>
+
+                    <!-- Sinnvoll Fuer 'navitem'-Buttons: normal oder 'disabled', evtl. in Kombi mit Scrollspy -->
+                    <div id="sidebutton-maincontent" class="jo-sibu jo-disabled">
+                        <i class="bi-house"></i>
+                        <span data-ll="Main Content">Main Content</span>
+                    </div>
+
+                    <div id="sidebutton-terminal" class="jo-sibu jo-disabled">
+                        <i class="bi-terminal"></i>
+                        <span data-ll="Terminal">Terminal</span>
+                    </div>
+
+                    <!-- Grafik erstmal disabled, zeigt auch class jo-disabled -->
+                    <div id="sidebutton-graph" class="jo-sibu jo-disabled">
+                        <i class="bi-graph-up"></i>
+                        <span data-ll="Graphics">Graphics</span>
+                    </div>
+
+                    <div class="jo-thin-hr"></div>
+
+                    <div id="sidebutton-bluetooth" class="jo-sibu bleblue jo-badge-smallcircle">
+                        <i class="bi-bluetooth"></i>
+                        <!-- Connet/Nr/Disconnect -->
+                        <span data-ll="Connect" id="blxConnectButtonText">Connect</span>
+                        <!-- Dieses Feld kann vom BLX veraendert werden: hidden und Color -->
+                        <span id="blxSignal" hidden class="jo-badge-span">... dBm</span>
+                    </div>
+
+                    <div class="jo-thin-hr"></div>
+
+                    <div id="sidebutton-setup" class="jo-sibu">
+                        <i class="bi-gear"></i>
+                        <span data-ll="Setup">Setup</span>
+                        <span>&nbsp;/&nbsp;<i class="bi-info-circle"></i></span>
+                    </div>
+
+                    <div data-ll="Devices" class="jo-sinavinfo">Devices</div>
+
+                    <div id="sidebutton-serversync" class="jo-sibu jo-badge-smallcircle">
+                        <!-- OPtional jo-icon-ani-shake wenn Server Sync noetig -->
+                        <i class="bi-arrow-repeat"></i>
+                        <span data-ll="Server-Sync">Server-Sync</span>
+                        <!-- class 'jo-hidden' wenn nicht sichtbar -->
+                        <span class="jo-badge-span">&utrif;0/0</span>
+                    </div>
+
+                    <div id="sidebutton-qrscan" class="jo-sibu green">
+                        <i class="bi-qr-code jo-icon-back-white"></i>
+                        <span data-ll="Scan">Scan</span>
+                    </div>
+
+                    <div class="jo-thin-hr"></div>
+
+                    <!-- Hier Liste der Geraet in HTML ,wird dynamisch gefuellt -->
+                    <div id="nav-devicelist">
+
+                        <!-- <div id="user-device-xx" class="jo-sibu">
+                            <i class="bi-gear"></i>
+                            <span>LTX1234567890</span>
+                            <span class="jo-badge-span jo-badge-unimportant">321</span>
+                        </div> -->
+
+                    </div>
+
+                </nav>
+                <!-- Sidebar ENDE, Content START -->
+
+                <!-- Content(s) START. Alle in diesem Container! -->
+                <main class="jo-content">
+
+                    <div id="section_main" class="jo-user-section">
+                        <div><b data-ll="Main Content">Main Content</b> <i class="bi-house"></i>
+                            <hr>
+                        </div>
+
+                        <!-- BLX Elemente fuer Haupseite START -->
+                        <div>
+                            <div>
+                                <span data-ll="Name">Name</span>: '<b id="blxDeviceName">-</b>'
+                                <br class="mobile-br">
+
+                                MAC: <span id="blxMAC">-</span>
+                                <br class="mobile-br">
+
+                                Type: <span id="blxType">-</span>
+                                FW: V<span id="blxFW">-</span>
+
+                                <br>
+                                <br>
+
+                                <span id="blxBadge" style="display:none">
+                                    <!-- print Badge only for Factory Setup-->
+                                    <button disabled id="blxBadgeButton"><i>Print Badge</i></button>
+                                    <br>
+                                    <br>
+                                </span>
+
+                                <span id="blxPinEnter" style="display:none">
+                                    <button id="blxSetPinButton">Set PIN</button>
+                                    <button id="blxScanPinButton" class="green">
+                                        <span data-ll="Scan">Scan</span> <i class="bi-qr-code jo-icon-back-white"></i>
+                                    </button>
+                                    <br class="mobile-br">
+                                    PIN: <input type="text" id="blxPIN" size="9">
+                                    <br>
+                                    <br>
+                                </span>
+
+                                <span id="blxInfoButtonSpan" style="display:none">
+                                    <button data-ll="Memory Info" disabled id="blxInfoButton">Memory Info</button>
+                                    <span data-ll="Memory">Memory</span>:
+                                    <br class="mobile-br">
+                                    <span id="blxMemory">-</span>
+                                    <br>
+                                    <br>
+                                </span>
+
+                                <span id="blxSyncButtonSpan" style="display:none">
+                                    <button disabled id="blxSyncButton" data-ll="Synchronize Time">Synchronize Time</button>
+                                    <br class="mobile-br">
+                                    <span data-ll="Delta">Delta</span>: <span id="blxSync">-</span>
+                                    <br>
+                                    <br>
+                                </span>
+
+                                <span id="blxUploadButtonSpan" style="display:none">
+                                    <button disabled id="blxUploadButton" data-ll="Load Data from Device">Load Data from Device</button>
+                                    <br class="mobile-br">
+                                    <span id="blxGraph"></span>
+                                    <br>
+                                    <br>
+                                </span>
+
+                                <!-- Span MEASURE for Loggers AND Sensors -->
+                                <button disabled id="blxMeasureButton" data-ll="Measure">Measure</button>
+                                <br class="mobile-br">
+                                <span data-ll="Values">Values</span>: <span id="blxMeasureData">-</span>
+                                <br>
+                                <br>
+
+                                <span id="blxClearButtonSpan" style="display:none">
+                                    <button disabled id="blxClearButton" data-ll="Clear Memory">Clear Memory</button>
+                                    <br>
+                                    <br>
+                                </span>
+
+                                <span id="blxParametersSpan" style="display:none; white-space: nowrap;">
+                                    <button disabled id="blxParametersButton" data-ll="Device Parameter">Device Parameter</button>
+                                    <br class="mobile-br">
+                                    <button disabled id="blxSysParButton" data-ll="Device SysPar">Device SysPar</button>
+
+                                    <br>
+                                </span>
+
+                                <span data-ll="Info">Info</span>: <span id="blxInfoLine"></span><br>
+                                <span data-ll="Result">Result</span>: <span id="blxCmdRes"></span>
+                            </div>
+                            <hr>
+                        </div>
+                        <!-- BLX Elemente fuer Haupseite ENDE -->
+
+                    </div>
+
+                    <div id="section_terminal" class="jo-user-section">
+                        <div><b data-ll="Terminal">Terminal</b> <i class="bi-terminal"></i>
+                            <hr>
+                        </div>
+                        <div id="blxTerminal"></div>
+                    </div>
+
+                </main>
+                <!-- Content ENDE -->
+
+            </div>
+
+        </div> <!-- Ende jo-ccontent-->
+
+        <!-- Rechte Teile im Footer wie im Header -->
+        <footer class="jo-menu-footer">
+            <div>
+                <span id="bd-online" style="color: var(--lime);"><i class="bi-link"></i>
+                    Online</span>
+                <span id="bd-offline" hidden style="color: var(--red);"><i class="bi-ban"></i>
+                    Offline</span>
+            </div>
+
+            <!-- Debug-Button einfach mal da, bei Bedarf aktivieren -->
+            <button hidden id="button-debug">(DEBUG)</button>
+            <span class="jo-menu-right">
+                <span id="bd-version" class="jo-font-small">x.xx xx.xx.xxxx</span>
+            </span>
+        </footer>
+    </div>
+
+    <!-- Hier Platz fuer Test-Dialoge, die spaeter dann dynamisch werden koennen
+    <dialog id="testDialog">
+    </dialog> -->
+
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+/* qrscanner.css - 04.02.2024 (C) JoEmbedded.de V1.0 */
+#qrscanner-dialog {
+  position: relative;
+  border-radius: 4px;
+  padding: 4px;
+
+  #qrvideo-header {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+  }
+  #qrcam-selector {
+	font-size: inherit;
+  }
+
+  #qrscanner-btnClose {
+	margin: 0;
+	position: absolute;
+	border: none;
+	background-color: lightgray;
+    border-radius: 4px;
+	top: 0;
+	right: 0;
+	font-size: 1.5rem;
+	padding: 8px;
+
+	&:hover {
+	  background-color: gray;
+	}
+  }
+
+  #qrscanner-btnTorch {
+	margin: 0;
+	display: none;
+	position: absolute;
+	border: none;
+	background-color: lightgray;
+    border-radius: 4px;
+	bottom: 32px;
+	right: 28px;
+	font-size: 2rem;
+	padding: 2px;
+
+	&:hover {
+	  background-color: gray;
+	}
+  }
+
+  #qrscaled-videocanvas {
+	border: 8px solid darkgray;
+	background-color: gray;
+  }
+}
