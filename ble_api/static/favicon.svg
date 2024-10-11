@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
-<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
  <!-- Created with SVG-edit - https://github.com/SVG-Edit/svgedit-->
  <g class="layer">
   <title>Layer 1</title>
-  <rect fill="#ffffff" height="200" id="svg_2" stroke="#000000" stroke-width="0" width="200" x="0" y="0"/>
+  <rect fill="#ffffff" height="206" id="svg_2" stroke="#000000" stroke-width="0" transform="matrix(1 0 0 1 0 0)" width="206" x="25" y="25"/>
   <circle cx="10050000391993284" cy="160" fill="#0000ff" id="svg_3" r="53.57" stroke="#000000" stroke-width="0"/>
   <circle cx="85" cy="287" fill="#0000ff" id="svg_4" stroke="#000000" stroke-width="0"/>
-  <circle cx="100" cy="104" fill="#0000ff" id="svg_1" r="96" stroke="#000000" stroke-width="0" transform="matrix(1 0 0 1 0 0)"/>
-  <circle cx="102" cy="151" fill="#00ffff" id="svg_5" r="46.69" stroke="#000000" stroke-width="0"/>
-  <ellipse cx="102" cy="122" fill="#ffffff" id="svg_7" rx="23" ry="10" stroke="#000000" stroke-width="0" transform="matrix(1 0 0 1 0 0)"/>
+  <circle cx="128.5" cy="128" fill="#0000ff" id="svg_1" r="96" stroke="#000000" stroke-width="0" transform="matrix(1 0 0 1 0 0)"/>
+  <circle cx="128.5" cy="176" fill="#00ffff" id="svg_5" r="46.69" stroke="#000000" stroke-width="0"/>
+  <ellipse cx="128.5" cy="147" fill="#ffffff" id="svg_7" rx="23" ry="10" stroke="#000000" stroke-width="0"/>
  </g>
 </svg>
