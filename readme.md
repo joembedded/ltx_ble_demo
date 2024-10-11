@@ -18,7 +18,7 @@ Automatic installation:
 
 Fallback (manuall installation):
 - On Android smartphones: Select `Add to home screen`
-- On desktop PC: In the browser, select the 3-dot menu ` &vellip; ` (on the right side): `Stream, save, share` -> `Install as APP`
+- On desktop PC: In the browser, select the 3-dot menu '&vellip;' (on the right side): `Stream, save, share` -> `Install as APP`
 
 
 Live: [BlxDashboard (in Repository LTX BLE Demo)](https://joembedded.github.io/ltx_ble_demo/ble_api/index.html)
