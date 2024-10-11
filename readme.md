@@ -1,5 +1,4 @@
-# BlxDashboard:
-# Using Web Bluetooth to access LTX Data Loggers #
+# BlxDashboard:<br>Using Web Bluetooth to access LTX Data Loggers #
 ** A PWA (Progressive Web APP) for accessing LTX Data Loggers with BLE, LTE-M. LTE-NB, EDGE, EGPRS, Satellite, ...  
 
 __Web Bluetooth__ is an official __W3C API__, integrated in most modern Browsers (like Chrome, Edge, Opera, …)
