@@ -5,7 +5,7 @@ __Web Bluetooth__ is an official __W3C API__, integrated in most modern Browsers
 on Android and Windows, making it easy to connect to Bluetooth devices with one single software. 
 Runs on Desktops/Notebooks (Windows), as well as on Smartphones/Tablets (Android and Windows)! 
 
-_(Unfortunately the Web Bluetooth API is still not fully available on Safari (iOS), but workarounds exists, using a Wrapper-App with a WebViewer )._
+_(Unfortunately the Web Bluetooth API is still not fully available on Safari (iOS), but workarounds exists, using a Wrapper-App with a WebViewer. And apparently the API will soon be fully available on iOS too)._
 
 !['Screenshot'](./ble_api/static/preview1024x768.png "Screenshots BlxDashboard")
 
@@ -14,7 +14,7 @@ It is even not necessary to install any 'native APP'. The complete software is n
 ### Installation as PWA (Progressive Web APP) (for offline use):
 
 Automatic installation
-- Simply Click on ` Install APP `
+- Simply Click ` Install APP `
 
 Fallback (manuall installation):
 - On Android smartphones: Select `Add to home screen`
