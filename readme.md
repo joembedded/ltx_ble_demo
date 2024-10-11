@@ -12,7 +12,6 @@ _(Unfortunately the Web Bluetooth API is still not fully available on Safari (iO
 It is even not necessary to install any 'native APP'. The complete software is nothing else, than a _„Simple Web page“_, that can work even offline (if installed).
 
 ### Installation as PWA (Progressive Web APP) (for offline use):
-
 Automatic installation:
 - Simply Click ` Install APP `
 
@@ -23,7 +22,8 @@ Fallback (manuall installation):
 
 Live: [BlxDashboard (in Repository LTX BLE Demo)](https://joembedded.github.io/ltx_ble_demo/ble_api/index.html)
 
-### *todo*
+### ToDo
+- Improved Parameter Editor
 - Fast Graphics (Finger-Pinch)
 - Server Scripts for uploaded data
 
