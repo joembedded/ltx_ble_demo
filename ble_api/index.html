@@ -69,7 +69,6 @@ Ein Dashboard fuer LTX Data Logger als PWA
 </head>
 
 <body>
-
     <div class="jo-vcontainer">
 
         <header class="jo-menu-header">
@@ -295,10 +294,13 @@ Ein Dashboard fuer LTX Data Logger als PWA
                     Offline</span>
             </div>
 
+            <div id="blxAutoPIN" class="red back-white" style="display:none">
+                &nbsp;<i class="bi-shield-fill-exclamation  jo-icon-ani-blink"></i> AutoPIN &nbsp;
+            </div>
             <!-- Debug-Button einfach mal da, bei Bedarf aktivieren -->
             <button hidden id="button-debug">(DEBUG)</button>
 
-            <!-- Buttun MUSS 'joInstallApp' heissen! Wird per Default von CSS zu hidden -->
+            <!-- Button MUSS 'joInstallApp' heissen! Wird per Default von CSS zu hidden -->
             <button id="joInstallApp" data-ll="Install APP">Install APP</button>
 
             <span class="jo-menu-right">

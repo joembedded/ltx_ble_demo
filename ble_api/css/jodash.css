@@ -200,7 +200,16 @@ input[type=checkbox] {
         0 0 30px #f77,
         0 0 100px #f33;
   }
+
+  .back-white {
+    background-color: var(--white100);
+}
+
+.back-black {
+    background-color: var(--black0);
+}
   
+
 /* === Bei Icons Hintergrundfarb im ::before festgelegt, kann nur via class gesetzt werden (z.B. fuer Animationen) ===*/
 .jo-icon-back-white {
     &::before {
