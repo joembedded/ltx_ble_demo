@@ -1,5 +1,7 @@
-/* jodash.css - (C) JoEmbedded.de */
+/* jodash.css - (C)JoEmbedded.de  */
 :root {
+    --version: 'V1.00 / 04.01.2025';
+
     /* CSS Variablen, extern aenderbar! Farben mit Helligkeitswert*/
     --white100: #ffffff;
     --txtwhite97: #f8f8f8;
@@ -237,8 +239,9 @@ input[type=checkbox] {
 
 /*--- Spacer (thin black line) (separate Menue items )---*/
 .jo-thin-hr {
-    border-bottom: 1px solid var(--midgray50);
-    margin: 0 0.5em;
+    border: 0;
+    height: 1px; 
+    background:  linear-gradient(to right,  rgba(0,0,0,0) 0%, var(--midgray50) 1em, var(--midgray50) calc(100% - 1em),  rgba(0,0,0,0) 100%);
 }
 
 /* Plaziert einen EIntrag in einer Flexbox (Mneues) rechts, z.B. fuer Menues */
@@ -248,6 +251,11 @@ input[type=checkbox] {
 
 .jo-font-small {
     font-size: 0.7em;
+}
+
+/* Rahmen 0.1em aussenrum */
+.jo-padding-s {
+    padding: 0.15em;
 }
 
 /* Element verstecken als Klasse einfacher */
@@ -435,6 +443,7 @@ input[type=checkbox] {
                     &:hover {
                         transition: all ease var(--scrollms);
                         background-color: var(--hovergray75);
+                        border-radius: 0.3em;
                     }
                 }
 
