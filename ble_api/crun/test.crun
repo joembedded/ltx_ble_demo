@@ -1,0 +1,6 @@
+// Hallo Welt - Zeile 1
+// Hallo Welt - Zeile 2
+.sleep 3000
+// Hallo Welt - Zeile 3
+.expect connected
+// Connected!
