@@ -1,6 +1,6 @@
 /* jodash.css - (C)JoEmbedded.de  */
 :root {
-    --version: 'V1.00 / 04.01.2025';
+    --version: 'V1.01 / 31.01.2025';
 
     /* CSS Variablen, extern aenderbar! Farben mit Helligkeitswert*/
     --white100: #ffffff;
@@ -69,6 +69,11 @@ select,
 option,
 input {
     font-size: inherit;
+}
+
+input:invalid {
+    border-color: var(--red);
+    outline: 0.2em solid var(--red);
 }
 
 input[type=checkbox] {

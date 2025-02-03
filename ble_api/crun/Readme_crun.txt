@@ -1,7 +1,8 @@
 In diesem Ordner befinden sich diverse Scripte fuer CRUN
 Einige davon sind vertraulich. Genaue Anleitung zu CRUN *todo*
 
-In diesem Verzeichns INTERNE Scripte!
+In diesem Verzeichns Allgemeine Scripte!
+Aufruf z.B. mit CMD: .crun crun/test.crun
 
 
 Minimal:
