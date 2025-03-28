@@ -8,7 +8,6 @@ Ein Dashboard fuer LTX Data Logger als PWA
 -->
 
 
-
 <html lang="en">
 
 <head>
@@ -112,15 +111,14 @@ Ein Dashboard fuer LTX Data Logger als PWA
                         <span data-ll="Main Content">Main Content</span>
                     </div>
 
-                    <div id="sidebutton-terminal" class="jo-sibu jo-disabled">
-                        <i class="bi-terminal"></i>
-                        <span data-ll="Terminal">Terminal</span>
-                    </div>
-
-                    <!-- Grafik erstmal disabled, zeigt auch class jo-disabled -->
                     <div id="sidebutton-graph" class="jo-sibu jo-disabled">
                         <i class="bi-graph-up"></i>
                         <span data-ll="Graphics">Graphics</span>
+                    </div>
+                    
+                    <div id="sidebutton-terminal" class="jo-sibu jo-disabled">
+                        <i class="bi-terminal"></i>
+                        <span data-ll="Terminal">Terminal</span>
                     </div>
 
                     <div class="jo-thin-hr"></div>
@@ -249,6 +247,12 @@ Ein Dashboard fuer LTX Data Logger als PWA
                                 <span data-ll="Values">Values</span>: <span id="blxMeasureData">-</span>
                                 <br>
                                 <br>
+                                <!-- Span RAW for Loggers AND Sensors Special Data (e.g. Radar-Raw)-->
+                                <span id="blxRawSpan" style="display:none">
+                                <button disabled id="blxRawButton" data-ll="Raw Scan">Raw Scan</button>
+                                <br>
+                                <br>
+                                </span>
 
                                 <span id="blxClearButtonSpan" style="display:none">
                                     <button disabled id="blxClearButton" data-ll="Clear Memory">Clear Memory</button>
@@ -273,6 +277,19 @@ Ein Dashboard fuer LTX Data Logger als PWA
                         <!-- BLX Elemente fuer Haupseite ENDE -->
 
                     </div>
+
+                    <div id="section_graphics" class="jo-user-section" style="display:none;">
+                        <div><b data-ll="Graphics">Graphics</b> <i class="bi-graph-up"></i>
+                            <span style="float:right">
+                                <button id="button-close-graphics">&#10006;</button>                                
+                            </span>
+                            <hr>
+                        </div>
+                        <div id="blxCanvasDiv" class="jo-stdcanvas">
+                            <canvas id="blxCanvas" ></canvas>
+                        </div>
+                    </div>
+
 
                     <div id="section_terminal" class="jo-user-section">
                         <div><b data-ll="Terminal">Terminal</b> <i class="bi-terminal"></i>

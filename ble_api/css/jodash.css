@@ -81,14 +81,14 @@ input:invalid {
 input[type=checkbox] {
     margin: 0;
     width: 1em;
-    height: 1em; 
-    vertical-align: -0.125em; 
+    height: 1em;
+    vertical-align: -0.125em;
 }
 
 /* Fuer PWA: Hide Install button 'joInstallApp' until beforeinstallprompt fires */
-#joInstallApp { 
+#joInstallApp {
     display: none;
-  }
+}
 
 /* === Ein paar Animationen fuer die icons. Verwendung durch setzen der Klasse === */
 
@@ -96,11 +96,12 @@ input[type=checkbox] {
     position: relative;
     animation: joanblink 1s steps(2) infinite;
 }
+
 @keyframes joanblink {
     0% {
         opacity: 20%;
-    } 
-  }
+    }
+}
 
 /* Icon in Uhrzeiger rotieren */
 .jo-icon-ani-rotate::before {
@@ -208,16 +209,16 @@ input[type=checkbox] {
         0 0 10px #fff,
         0 0 30px #f77,
         0 0 100px #f33;
-  }
+}
 
-  .back-white {
+.back-white {
     background-color: var(--white100);
 }
 
 .back-black {
     background-color: var(--black0);
 }
-  
+
 
 /* === Bei Icons Hintergrundfarb im ::before festgelegt, kann nur via class gesetzt werden (z.B. fuer Animationen) ===*/
 .jo-icon-back-white {
@@ -247,8 +248,8 @@ input[type=checkbox] {
 /*--- Spacer (thin black line) (separate Menue items )---*/
 .jo-thin-hr {
     border: 0;
-    height: 1px; 
-    background:  linear-gradient(to right,  rgba(0,0,0,0) 0%, var(--midgray50) 1em, var(--midgray50) calc(100% - 1em),  rgba(0,0,0,0) 100%);
+    height: 1px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, var(--midgray50) 1em, var(--midgray50) calc(100% - 1em), rgba(0, 0, 0, 0) 100%);
 }
 
 /* Plaziert einen EIntrag in einer Flexbox (Mneues) rechts, z.B. fuer Menues */
@@ -324,6 +325,7 @@ input[type=checkbox] {
         /* align-items: center: Alle auf einer Linie */
         align-items: center;
     }
+
     /* header footer  ENDE */
 
     .jo-chcontent {
@@ -474,8 +476,13 @@ input[type=checkbox] {
                     padding: 0.5em;
                     display: flex;
                     flex-direction: column;
-                }
 
+                    & .jo-stdcanvas {
+                        height: calc((100svh - var(--hdrheight) - var(--ftrheight)) * 0.66);
+                        /* background-color: #FF0; */
+                    }
+
+                }
             }
         }
     }
@@ -526,6 +533,7 @@ dialog {
         max-height: calc(85vh - 5em);
         padding: 0.8em;
     }
+
     .jo-dialog-buttonclose {
         margin: 0;
         position: absolute;
