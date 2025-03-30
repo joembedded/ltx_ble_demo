@@ -225,9 +225,9 @@ export function drawRadarRaw(vals) {
     txt = `${graphName}: \uD83D\uDCF6:${maxy.toFixed(0)} \uD83D\uDCCF\u2248${pm.toFixed(2)} m `
     txtMet = gx.ctx.measureText(txt)
     gx.ctx.fillStyle = "#EEE"
-    gx.ctx.fillRect(ml + 2, mt + 4, txtMet.width + 5, txtHeightG + 10)
+    gx.ctx.fillRect(ml + 2, mt + 1, txtMet.width + 5, txtHeightG + 10)
     gx.ctx.fillStyle = "#00F"
-    gx.ctx.fillText(txt, ml + 2, mt + 12)
+    gx.ctx.fillText(txt, ml + 2, mt + 10)
 
     gx.ctx.restore()
 
@@ -410,10 +410,17 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
             gx.ctx.textBaseline = "middle"
             gx.ctx.fillText(txt, lx + 20, legy + 3)
             legy += txtHeightG * 1.5
-
         }
-
     }
+
+    gx.ctx.font = `${txtHeightG}px Arial`
+    gx.ctx.textBaseline = "top"
+    const txt = `${graphName}`
+    const txtMet = gx.ctx.measureText(txt)
+    gx.ctx.fillStyle = "#EEE"
+    gx.ctx.fillRect(ml + 2, mt + 1, txtMet.width + 5, txtHeightG + 10)
+    gx.ctx.fillStyle = "#00F"
+    gx.ctx.fillText(txt, ml + 1, mt + 10)
 
     gx.ctx.restore()
 
