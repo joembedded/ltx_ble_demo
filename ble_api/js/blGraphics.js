@@ -334,11 +334,12 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     gx.ctx.strokeRect(0, 0, gx.cxw, gx.cxh)
 
     const scanlineh = txtHeight*0.7
-    let y0 = gx.cxh - mb - scanlineh * localRadarLiveData.cnt++
-    localRadarLiveData.cnt %= 4
+    let y0 = gx.cxh - mb - scanlineh * (localRadarLiveData.cnt +1)
+    localRadarLiveData.cnt  = (localRadarLiveData.cnt+1)%4
     gx.ctx.save()
-    gx.ctx.lineWidth = 1
-    let alpha = 0.9
+    gx.ctx.lineWidth = 15
+    gx.ctx.strokeStyle = "#CCC"
+    let alpha = 1
     while(y0 > mt){
         gx.ctx.globalAlpha = alpha
         gx.ctx.beginPath()
