@@ -310,8 +310,15 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
         })
     })
 
-    mindist -= 0.01 // Jeweils 1 cm dazu li/re
-    maxdist += 0.01
+
+    let deltlr = (maxdist-mindist)/2
+    if(deltlr<0.05) deltlr=0.05
+    else if (deltlr<0.25) deltlr=0.25
+    mindist -= deltlr // Jeweils 10-50 cm dazu li/re
+    maxdist += deltlr
+    mindist = mindist.toFixed(2)
+    maxdist = maxdist.toFixed(2)
+
     const vanz = vals.length
 
     const txtHeight = 24 * gx.cns
@@ -327,17 +334,36 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     const divdist = maxdist - mindist
 
     gx.ctx.save()
+
     gx.ctx.lineWidth = 2 // Mindestbreite, sonst Artefakte
     gx.ctx.strokeStyle = "#000"
     gx.ctx.clearRect(0, 0, gx.cxw, gx.cxh) // geht nur auf 2 steps
     gx.ctx.strokeRect(ml, mt, gx.cxw - mr - ml, gx.cxh - mb - mt)
     gx.ctx.strokeRect(0, 0, gx.cxw, gx.cxh)
 
+    // Grenzen Links-Rechts
+    gx.ctx.textBaseline = "top"
+    let txt = `| ${mindist} m`
+    let txtMet = gx.ctx.measureText(txt)
+    gx.ctx.fillStyle = "#EEE"
+    const my0 = gx.cxh - mb + 4 // Texte unten 
+    gx.ctx.fillRect(ml-2, my0-2, txtMet.width + 5, txtHeight + 4)
+    gx.ctx.fillStyle = "#000"
+    gx.ctx.fillText(txt, ml-2, my0)
+
+    txt = ` ${maxdist} m |`
+    txtMet = gx.ctx.measureText(txt)
+    gx.ctx.fillStyle = "#EEE"
+    const tx = gx.cxw - mr - txtMet.width + 2
+    gx.ctx.fillRect(tx-2, my0-2, txtMet.width + 5, txtHeight + 4)
+    gx.ctx.fillStyle = "#000"
+    gx.ctx.fillText(txt, tx, my0)
+
     const scanlineh = txtHeight*0.7
     let y0 = gx.cxh - mb - scanlineh * (localRadarLiveData.cnt +1)
     localRadarLiveData.cnt  = (localRadarLiveData.cnt+1)%4
     gx.ctx.save()
-    gx.ctx.lineWidth = 15
+    gx.ctx.lineWidth = 16
     gx.ctx.strokeStyle = "#CCC"
     let alpha = 1
     while(y0 > mt){
@@ -347,7 +373,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
         gx.ctx.lineTo(gx.cxw - mr,y0)
         gx.ctx.stroke()
         y0 -= 4 * scanlineh // jede 8. Punkt ne Zeile
-        alpha *= 0.8
+        alpha *= 0.82
     }
     gx.ctx.restore()
 
@@ -378,7 +404,6 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
                     fs = vsig
                     fx = ix
                 }
-
                     gx.ctx.beginPath()
                     gx.ctx.arc(ix, iy, 2+rsig*1.5, as, ae)
                     gx.ctx.fill()
@@ -396,7 +421,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
             gx.ctx.font = `${txtHeight}px Arial`
             const mx = `| ${fv.toFixed(3)} m`
             gx.ctx.textBaseline = "top"
-            gx.ctx.fillText(mx, fx - 4, gx.cxh - mb + 4)
+            gx.ctx.fillText(mx, fx - 4, my0)
 
             gx.ctx.beginPath()
             const lx = x0 + spanx + txtHeightG * 2
@@ -415,8 +440,8 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
 
     gx.ctx.font = `${txtHeightG}px Arial`
     gx.ctx.textBaseline = "top"
-    const txt = `${graphName}`
-    const txtMet = gx.ctx.measureText(txt)
+    txt = `${graphName}`
+    txtMet = gx.ctx.measureText(txt)
     gx.ctx.fillStyle = "#EEE"
     gx.ctx.fillRect(ml + 2, mt + 1, txtMet.width + 5, txtHeightG + 10)
     gx.ctx.fillStyle = "#00F"
