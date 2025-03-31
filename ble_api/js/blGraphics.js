@@ -320,7 +320,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     let deltlr = 0.75 - (maxdist-mindist)/2
     if(deltlr>0.25) deltlr=0.25
     else if (deltlr<0.1) deltlr=0.1
-console.log((maxdist-mindist)/2, deltlr)
+    //console.log((maxdist-mindist)/2, deltlr)
     mindist -= deltlr // Jeweils 10-50 cm dazu li/re
     maxdist += deltlr
     mindist = mindist.toFixed(2)
