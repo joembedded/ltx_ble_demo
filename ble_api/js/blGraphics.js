@@ -214,7 +214,7 @@ export function drawRadarRaw(vals) {
     txtMet = gx.ctx.measureText(txt)
     gx.ctx.fillStyle = "#EEE"
     const tx = gx.cxw - mr - txtMet.width + 2
-    gx.ctx.fillRect(tx + 5, y0 + 1, txtMet.width + 5, txtHeight + 10)
+    gx.ctx.fillRect(tx , y0 + 1, txtMet.width +1, txtHeight + 10)
     gx.ctx.fillStyle = "#00F"
     gx.ctx.fillText(txt, tx, y0 + 5)
 
@@ -238,6 +238,12 @@ export function drawRadarRaw(vals) {
 
 // Typ 4700 - Rohe Radardaten. localRadarLiveData
 const ltd = [ // test-data
+    [{ dist: 1.981, sig: -20 }],
+    [{ dist: 0.682, sig: -20 }],
+    [{ dist: 0.583, sig: -20 }],
+    [{ dist: 0.484, sig: -20 }],
+    [{ dist: 0.385, sig: -20 }],
+
     [{ dist: 0.781, sig: -20 }, { dist: 1.343, sig: -17.8 }],
     [{ dist: 0.782, sig: -19 }, { dist: 1.32, sig: -17.7 }],
     [{ dist: 0.783, sig: -18.8 }, { dist: 1.3, sig: -17.9 }, { dist: 3.46, sig: -18.9 }],
@@ -280,7 +286,8 @@ const ltd = [ // test-data
     [{ dist: 0.781, sig: -20 }, { dist: 1.343, sig: -17.8 }, { dist: 3.47, sig: -18.9 }],
     [{ dist: 0.782, sig: -19 }, { dist: 1.32, sig: -17.7 }],
     [{ dist: 0.789, sig: -18.8 }, { dist: 1.3, sig: -17.9 }, { dist: 3.52, sig: -18.9 }]
-]
+
+    ]
 export function testDrawRadarLive() {
     let tind = 0
     setInterval(() => {
@@ -310,10 +317,10 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
         })
     })
 
-
-    let deltlr = (maxdist-mindist)/2
-    if(deltlr<0.05) deltlr=0.05
-    else if (deltlr<0.25) deltlr=0.25
+    let deltlr = 0.75 - (maxdist-mindist)/2
+    if(deltlr>0.25) deltlr=0.25
+    else if (deltlr<0.1) deltlr=0.1
+console.log((maxdist-mindist)/2, deltlr)
     mindist -= deltlr // Jeweils 10-50 cm dazu li/re
     maxdist += deltlr
     mindist = mindist.toFixed(2)
