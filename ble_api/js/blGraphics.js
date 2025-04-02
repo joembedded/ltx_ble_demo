@@ -3,7 +3,7 @@ import * as JD from './jodash.js'
 import * as I18 from './intmain_i18n.js'
 import './blx.js'
 
-export const VERSION = 'V0.02 / 29.03.2025'
+export const VERSION = 'V0.1 / 02.04.2025'
 export const COPYRIGHT = '(C)JoEmbedded.de'
 
 // ---- #Graphics Start ----
@@ -214,7 +214,7 @@ export function drawRadarRaw(vals) {
     txtMet = gx.ctx.measureText(txt)
     gx.ctx.fillStyle = "#EEE"
     const tx = gx.cxw - mr - txtMet.width + 2
-    gx.ctx.fillRect(tx , y0 + 1, txtMet.width +1, txtHeight + 10)
+    gx.ctx.fillRect(tx, y0 + 1, txtMet.width + 1, txtHeight + 10)
     gx.ctx.fillStyle = "#00F"
     gx.ctx.fillText(txt, tx, y0 + 5)
 
@@ -287,7 +287,7 @@ const ltd = [ // test-data
     [{ dist: 0.782, sig: -19 }, { dist: 1.32, sig: -17.7 }],
     [{ dist: 0.789, sig: -18.8 }, { dist: 1.3, sig: -17.9 }, { dist: 3.52, sig: -18.9 }]
 
-    ]
+]
 export function testDrawRadarLive() {
     let tind = 0
     setInterval(() => {
@@ -301,7 +301,7 @@ let localRadarLiveData = {  /*vals: [] cnt */ }
 export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     graphType = 4701
     if (localRadarLiveData.vals === undefined) localRadarLiveData.vals = []
-    if (localRadarLiveData.cnt === undefined) localRadarLiveData.cnt=0
+    if (localRadarLiveData.cnt === undefined) localRadarLiveData.cnt = 0
     const vals = localRadarLiveData.vals // Ausm Cache
     if (newvals !== undefined) vals.unshift(structuredClone(newvals))
     while (vals.length > 100) vals.pop()
@@ -317,9 +317,9 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
         })
     })
 
-    let deltlr = 0.75 - (maxdist-mindist)/2
-    if(deltlr>0.25) deltlr=0.25
-    else if (deltlr<0.1) deltlr=0.1
+    let deltlr = 0.75 - (maxdist - mindist) / 2
+    if (deltlr > 0.25) deltlr = 0.25
+    else if (deltlr < 0.1) deltlr = 0.1
     //console.log((maxdist-mindist)/2, deltlr)
     mindist -= deltlr // Jeweils 10-50 cm dazu li/re
     maxdist += deltlr
@@ -332,7 +332,12 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     const txtHeightG = gx.cns * 32
 
     const ml = 20.5 // margin left, right bottom top
-    const mr = 20.5 + txtHeight * 18
+
+    let lsc = true // large screen
+    if (document.documentElement.clientWidth < 600) lsc = false
+    let mr = 20.5
+    if (lsc) mr += txtHeight * 18   // rechts aussen Legende
+
     const mb = 20.5 + txtHeight * 2
     const mt = 20.5
 
@@ -354,30 +359,30 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     let txtMet = gx.ctx.measureText(txt)
     gx.ctx.fillStyle = "#EEE"
     const my0 = gx.cxh - mb + 4 // Texte unten 
-    gx.ctx.fillRect(ml-2, my0-2, txtMet.width + 5, txtHeight + 4)
+    gx.ctx.fillRect(ml - 2, my0 - 2, txtMet.width + 5, txtHeight + 4)
     gx.ctx.fillStyle = "#000"
-    gx.ctx.fillText(txt, ml-2, my0)
+    gx.ctx.fillText(txt, ml - 2, my0)
 
     txt = ` ${maxdist} m |`
     txtMet = gx.ctx.measureText(txt)
     gx.ctx.fillStyle = "#EEE"
     const tx = gx.cxw - mr - txtMet.width + 2
-    gx.ctx.fillRect(tx-2, my0-2, txtMet.width + 5, txtHeight + 4)
+    gx.ctx.fillRect(tx - 2, my0 - 2, txtMet.width + 5, txtHeight + 4)
     gx.ctx.fillStyle = "#000"
     gx.ctx.fillText(txt, tx, my0)
 
-    const scanlineh = txtHeight*0.7
-    let y0 = gx.cxh - mb - scanlineh * (localRadarLiveData.cnt +1)
-    localRadarLiveData.cnt  = (localRadarLiveData.cnt+1)%4
+    const scanlineh = txtHeight * 0.7
+    let y0 = gx.cxh - mb - scanlineh * (localRadarLiveData.cnt + 1)
+    localRadarLiveData.cnt = (localRadarLiveData.cnt + 1) % 4
     gx.ctx.save()
     gx.ctx.lineWidth = 16
     gx.ctx.strokeStyle = "#CCC"
     let alpha = 1
-    while(y0 > mt){
+    while (y0 > mt) {
         gx.ctx.globalAlpha = alpha
         gx.ctx.beginPath()
-        gx.ctx.moveTo(ml,y0)
-        gx.ctx.lineTo(gx.cxw - mr,y0)
+        gx.ctx.moveTo(ml, y0)
+        gx.ctx.lineTo(gx.cxw - mr, y0)
         gx.ctx.stroke()
         y0 -= 4 * scanlineh // jede 8. Punkt ne Zeile
         alpha *= 0.82
@@ -387,6 +392,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     // Wasserfall - Hauptpeak: Blau, Rest in angegraut
     const col4 = ["#00F", "#F00", "#0F0", "#F0F", "#0FF", "#FA0", "#AAF", "#AAA"]
     let legy = mt + txtHeight * 1.5
+    if (!lsc) legy += txtHeight
     for (let idk = 0; idk < anzkan + 1; idk++) {
         let iy = gx.cxh - mb
         gx.ctx.beginPath()
@@ -400,7 +406,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
         const as = -Math.PI / 2
         const ae = Math.PI * 1.5
         // Zeichenstaerke abh. vom Signal
-        const rsig = 3 / (idk+1)
+        const rsig = 3 / (idk + 1)
         for (let i = 0; i < vanz; i++) {
             const valk = vals[i][idk]?.dist
             const vsig = vals[i][idk]?.sig
@@ -411,10 +417,10 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
                     fs = vsig
                     fx = ix
                 }
-                    gx.ctx.beginPath()
-                    gx.ctx.arc(ix, iy, 2+rsig*1.5, as, ae)
-                    gx.ctx.fill()
-                    gx.ctx.stroke()
+                gx.ctx.beginPath()
+                gx.ctx.arc(ix, iy, 2 + rsig * 1.5, as, ae)
+                gx.ctx.fill()
+                gx.ctx.stroke()
                 //console.log("Kan:", idk, "I:", i, "=>", valk)
                 zp++
             }
@@ -430,17 +436,25 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
             gx.ctx.textBaseline = "top"
             gx.ctx.fillText(mx, fx - 4, my0)
 
+            // Legende
+            let lx = ml + 1
+            if (lsc) lx = x0 + spanx + txtHeightG * 2
+
+            gx.ctx.save()
+            gx.ctx.font = `${txtHeightG}px Arial`
+            const txt = `[${idk}]: ${fv.toFixed(3)} m / ${fs.toFixed(2)} dBm`
+            gx.ctx.textBaseline = "middle"
+            gx.ctx.fillStyle = "#000"
+            gx.ctx.fillText(txt, lx + 30, legy + 3)
+            gx.ctx.restore()
+
+            // Noch alter fillstyle
             gx.ctx.beginPath()
-            const lx = x0 + spanx + txtHeightG * 2
-            gx.ctx.arc(lx, legy, 2+rsig*1.5, 0, Math.PI * 2)
+            gx.ctx.arc(lx+16, legy, 2 + rsig * 1.5, 0, Math.PI * 2)
             gx.ctx.fill()
             gx.ctx.stroke()
 
-            gx.ctx.font = `${txtHeightG}px Arial`
-            const txt = `[${idk}]: ${fv.toFixed(3)} m / ${fs.toFixed(2)} dBm`
-            gx.ctx.fillStyle = "#000"
-            gx.ctx.textBaseline = "middle"
-            gx.ctx.fillText(txt, lx + 20, legy + 3)
+
             legy += txtHeightG * 1.5
         }
     }
