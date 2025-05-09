@@ -3,7 +3,7 @@ import * as JD from './jodash.js'
 import * as I18 from './intmain_i18n.js'
 import './blx.js'
 
-export const VERSION = 'V0.1 / 02.04.2025'
+export const VERSION = 'V0.20 / 07.05.2025'
 export const COPYRIGHT = '(C)JoEmbedded.de'
 
 // ---- #Graphics Start ----
@@ -180,6 +180,7 @@ export function drawRadarRaw(vals) {
     let peakx = 0
     for (let i = 0; i < vanz; i++) {
         let vy = vals[i]
+        if(vy>5000) vy=5000  // 'Hoernchen' gibt tw. Riesenwerte
         if (vy > maxy) {
             maxy = vy
             peaki = i
