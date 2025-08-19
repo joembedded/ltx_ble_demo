@@ -22,6 +22,10 @@ const gx = {    // gx: Relevate Daten fuer gDraw
 
 function graphicsDraw() {
     switch (graphType) {
+        case 4601:
+            drawTemperatureLive()
+            break
+
         case 4700: // Typ*10 + Subtyp
             drawRadarRaw()
             break
@@ -54,8 +58,11 @@ export function enableGraphics(name, iclosecb) {
     graphType = 0
 
     // Lokale Graphs initialisieren
+    // 470
     localRadarRawIdata.multiy = undefined
     localRadarLiveData = {}
+    // 460
+    localTempLiveData = {}
 
     document.getElementById("section_graphics").style.display = "block"
     initGx()
@@ -126,7 +133,8 @@ function drawDummy() {
     gx.ctx.restore()
 }
 
-// Hier die typespezifischen implementierungen
+//======== Typ470 Radar ===============
+// // Hier die typespezifischen implementierungen
 // Typ 4700 - Rohe Radardaten. localRadarRawIdata
 let localRadarRawIdata = {/*divy: undefined ,*/ start_m: 0.24999, end_m: 2.05001, vals: [900, 0, 300, 0, 500, 210, 220, 1025, 33, 17] }
 export function radarMeta(start_m, end_m) {
@@ -180,7 +188,7 @@ export function drawRadarRaw(vals) {
     let peakx = 0
     for (let i = 0; i < vanz; i++) {
         let vy = vals[i]
-        if(vy>5000) vy=5000  // 'Hoernchen' gibt tw. Riesenwerte
+        if (vy > 5000) vy = 5000  // 'Hoernchen' gibt tw. Riesenwerte
         if (vy > maxy) {
             maxy = vy
             peaki = i
@@ -298,7 +306,7 @@ export function testDrawRadarLive() {
     }, 100)
 }
 
-let localRadarLiveData = {  /*vals: [] cnt */ }
+let localRadarLiveData = {  /*vals: [] cnt */ } // cnt: Module 4-Zaehler fuer Hintergrund
 export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     graphType = 4701
     if (localRadarLiveData.vals === undefined) localRadarLiveData.vals = []
@@ -451,7 +459,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
 
             // Noch alter fillstyle
             gx.ctx.beginPath()
-            gx.ctx.arc(lx+16, legy, 2 + rsig * 1.5, 0, Math.PI * 2)
+            gx.ctx.arc(lx + 16, legy, 2 + rsig * 1.5, 0, Math.PI * 2)
             gx.ctx.fill()
             gx.ctx.stroke()
 
@@ -472,5 +480,149 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
     gx.ctx.restore()
 
 }
+
+//======== Typ460 TMP119 ===============
+let vmul = 0.01
+let tststep=0
+export function testDrawTemperatureLive() {
+    setInterval(() => {
+        drawTemperatureLive(24+ Math.sin(tststep)*vmul)
+        tststep+=0.2
+        vmul += 0.002
+    }, 100)
+}
+
+let localTempLiveData = {  /*vals: [] cnt */ }
+export function drawTemperatureLive(newGradC) {
+    const maxpkt = 100
+    graphType = 4601
+    if (localTempLiveData.vals === undefined) localTempLiveData.vals = []
+    if (localTempLiveData.cnt === undefined) localTempLiveData.cnt = 0 // erstmal nicht verw.
+    const vals = localTempLiveData.vals // Ausm Cache
+    if (newGradC !== undefined) vals.unshift(structuredClone(newGradC))
+    while (vals.length > maxpkt) vals.pop() // Max. xxx Temps vorhalten
+    let mintemp = 100
+    let maxtemp = -100
+
+    vals.forEach((temp) => {
+        if (temp < mintemp) mintemp = temp
+        if (temp > maxtemp) maxtemp = temp
+    })
+
+    const tmin = mintemp-0.02
+    const tmax = maxtemp+0.02
+    const tdelta = tmax-tmin
+    // console.log(tdelta.toFixed(3))
+    
+    let td10 = 10   // Schrittweite
+    if(tdelta<= 0.1) td10=0.01
+    else if (tdelta<= 0.2) td10=0.02
+    else if (tdelta<= 0.25) td10=0.025
+    else if (tdelta<= 0.5) td10=0.05
+    else if (tdelta<= 1) td10=0.1
+    else if (tdelta<= 2) td10=0.2
+    else if (tdelta<= 2.5) td10=0.25
+    else if (tdelta<= 5) td10=0.5
+    else if (tdelta<= 10) td10=1
+    else if (tdelta<= 20) td10=2
+
+
+    const txtHeight = 24 * gx.cns
+    const mb = 30.5
+    const mt = 30.5
+    const mr = 20.5
+    const txtMet = gx.ctx.measureText("-99.9    ")
+    const ml = 20.5 + txtMet.width// margin left, right bottom top
+
+    gx.ctx.save()
+    gx.ctx.lineWidth = 2 // Mindestbreite, sonst Artefakte
+    gx.ctx.strokeStyle = "#000"
+    gx.ctx.fillStyle = "#000"
+    gx.ctx.clearRect(0, 0, gx.cxw, gx.cxh) // Alles
+
+    gx.ctx.textBaseline = "top"
+    gx.ctx.save()
+    gx.ctx.font = `${gx.cns * 48}px Arial` // RelFont, Gross
+    const atxt = `\u{1F321}\u{FE0F}:${vals[0].toFixed(3)} °C `
+    gx.ctx.textAlign = "right"
+    gx.ctx.fillStyle = "#900"
+    gx.ctx.fillText(atxt, gx.cxw - mr, mt+5)
+    gx.ctx.restore()
+
+
+    gx.ctx.beginPath()
+    gx.ctx.moveTo(ml - 15, mt)
+    gx.ctx.lineTo(ml, mt)
+    gx.ctx.moveTo(ml - 15, gx.cxh - mb)
+    gx.ctx.lineTo(ml, gx.cxh - mb)
+    gx.ctx.stroke()
+
+    gx.ctx.strokeRect(ml, mt, gx.cxw - mr - ml, gx.cxh - mb - mt)
+    gx.ctx.strokeRect(0, 0, gx.cxw, gx.cxh) // Rahmen aussenrum
+
+    //gx.ctx.fillText(tmax, 10, mt - txtHeight / 2)
+    //gx.ctx.fillText(tmin, 10, gx.cxh - mb - txtHeight / 2)
+
+    const deltaval = tmax - tmin
+    const deltacan = gx.cxh - mb - mt;
+    const deltax =  (gx.cxw - mr - ml)/vals.length
+
+    // Achsen
+    let t0 = Math.floor(tmin/td10) * td10 + td10
+    gx.ctx.strokeStyle = "#999"
+    gx.ctx.fillStyle = "#999"
+    gx.ctx.beginPath()
+    for(;;){
+        const posy = gx.cxh - mb - (t0-tmin) / deltaval * deltacan
+        gx.ctx.moveTo(ml,posy)
+        gx.ctx.lineTo(gx.cxw - mr, posy)
+        gx.ctx.fillText(t0.toFixed(3), 10, posy - txtHeight / 2)
+
+        t0+=td10
+        if(t0>= tmax) break
+
+    }
+    gx.ctx.stroke()
+
+    // Zuerst die Linien
+    let posx = ml + 1
+    gx.ctx.beginPath()
+    gx.ctx.strokeStyle = "#F00"
+    gx.ctx.fillStyle = "#900"
+    
+
+    for (let i = 0; i < vals.length; i++) {
+        const val = vals[i]
+        const posy = gx.cxh - mb - (val-tmin) / deltaval * deltacan
+        if(i) gx.ctx.lineTo(posx, posy)
+        else {
+            gx.ctx.fillText(val.toFixed(3), 10, posy - txtHeight / 2)
+            gx.ctx.moveTo(posx, posy)
+        }
+        posx+=deltax
+    }
+    gx.ctx.stroke()
+
+    // Dann die Punkte
+    posx = ml + 1
+    gx.ctx.fillStyle = "#B00"
+    let alpha=1
+    for (let i = 0; i < vals.length; i++) {
+        const val = vals[i]
+        const posy = gx.cxh - mb - (val-tmin) / deltaval * deltacan
+        gx.ctx.globalAlpha = alpha
+        gx.ctx.beginPath()
+        alpha*= 0.97
+
+        gx.ctx.arc(posx, posy, txtHeight/3, 0, Math.PI * 2)
+        gx.ctx.fill()
+        posx+=deltax
+        if(alpha<0.1) break
+    }
+
+    gx.ctx.restore()
+
+}
+
 
 // ---- #Graphics End ----
