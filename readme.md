@@ -28,8 +28,4 @@ Live: [BlxDashboard (in Repository LTX BLE Demo)](https://joembedded.github.io/l
 - Server Scripts for uploaded data
 
 
-### Changelog
-- 07.10.2024 V0.10
-- 11.10.2024 V0.15
-
 ---
