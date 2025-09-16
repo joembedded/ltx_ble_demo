@@ -1,0 +1,17 @@
+.lines 50
+.cls
+// --- ModbusSetup for Dragino Dissolved O2 Sensor - .crun crun/0210_modbus_draginoo2.crun ---
+.expect connected
+.expect type 210
+
+z?XK0=0.01!
+z?XK1=0!
+z?XK2=0.01!
+z?XK3=0!
+z?XC=r0x14 0x11 IssI!
+z?XU=oC mg/l!
+// Sensor in Continous Mode (P=0)
+z?XP=0!
+z?XWrite!
+e 1
+// ---

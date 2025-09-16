@@ -1,0 +1,32 @@
+.lines 50
+.cls
+// Script to init Orbcomm ST2100 / 'T403 AT Interface Developer Guide'
+.expect connected
+.expect type 920
+
+// Setup Orbcom Modem to 6h
+f1
+h2
+p21600
+r3600
+Write
+m
+.sleep 25000
+
+// Test Modem 
+$AT
+// Set to Fixed-Battery 1GPS/14d
+$ATS50=3
+// Setup GNSS Accuracy
+$ATS31=250
+$ATS32=250
+// Save Setup
+$AT&W
+// S51 sent to Orbcomm-Server 5 for 1h RX communication
+$ATS51=5
+
+// Test S50/51 - Expect 003 and 005
+$ATS50?
+$ATS51?
+
+// OK 
