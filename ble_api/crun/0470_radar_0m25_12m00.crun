@@ -1,0 +1,26 @@
+.lines 70
+.cls
+// Script to init Radar-Type470 to 12m with Saveing
+.expect connected
+.expect type 470
+
+.bfast
+// Set Coefficients
+z?XK0=1.0!
+z?XK1=0.0!
+z?XK2=16400!
+z?XK3=0.25!
+z?XK4=12.00!
+z?XK5=3!
+z?XK6=3!
+z?XK7=0!
+z?XK8=1!
+z?XK9=0.5!
+z?XK10=20!
+z?XK11=0!
+z?XWrite!
+
+// Test-Measure
+e1
+.bslow
+// OK

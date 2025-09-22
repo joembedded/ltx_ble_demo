@@ -451,7 +451,7 @@ export function drawRadarLive(newvals) {  // Dist/Sig-Pairs, Typ 4701
 
             gx.ctx.save()
             gx.ctx.font = `${txtHeightG}px Arial`
-            const txt = `[${idk}]: ${fv.toFixed(3)} m / ${fs.toFixed(2)} dBm`
+            const txt = `[${idk}]: ${fv.toFixed(3)} m / ${fs.toFixed(2)} dB`
             gx.ctx.textBaseline = "middle"
             gx.ctx.fillStyle = "#000"
             gx.ctx.fillText(txt, lx + 30, legy + 3)
