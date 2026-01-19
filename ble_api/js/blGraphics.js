@@ -3,7 +3,7 @@ import * as JD from './jodash.js'
 import * as I18 from './intmain_i18n.js'
 import './blx.js'
 
-export const VERSION = 'V0.20 / 07.05.2025'
+export const VERSION = 'V0.21 / 19.01.2026'
 export const COPYRIGHT = '(C)JoEmbedded.de'
 
 // ---- #Graphics Start ----
@@ -136,6 +136,9 @@ function drawDummy() {
 //======== Typ470 Radar ===============
 // // Hier die typespezifischen implementierungen
 // Typ 4700 - Rohe Radardaten. localRadarRawIdata
+export let paramDivyRaw = 0 // Feste Skalierung, 0: Auto
+export const setRawRadarScale = (val) => { paramDivyRaw = val }
+
 let localRadarRawIdata = {/*divy: undefined ,*/ start_m: 0.24999, end_m: 2.05001, vals: [900, 0, 300, 0, 500, 210, 220, 1025, 33, 17] }
 export function radarMeta(start_m, end_m) {
     localRadarRawIdata.start_m = start_m
@@ -179,7 +182,8 @@ export function drawRadarRaw(vals) {
         })
         localRadarRawIdata.divy = divy = maxy
     }
-
+    // Feste Skalierung fuer Kalibrierung. Ggfs. manuell aktivieren, selten gebraucht..
+    if(paramDivyRaw>0) divy = paramDivyRaw; // z.B. 6000 // Siehe jo_notes/mapping_radar_grafik.ods
     // Scan-Graph
     gx.ctx.strokeStyle = "#00F"
     gx.ctx.beginPath()
@@ -188,7 +192,7 @@ export function drawRadarRaw(vals) {
     let peakx = 0
     for (let i = 0; i < vanz; i++) {
         let vy = vals[i]
-        if (vy > 5000) vy = 5000  // 'Hoernchen' gibt tw. Riesenwerte
+        if (vy > 8000) vy = 8000  // Clippen
         if (vy > maxy) {
             maxy = vy
             peaki = i
@@ -240,7 +244,7 @@ export function drawRadarRaw(vals) {
 
     gx.ctx.restore()
 
-    const mz = (maxy > divy * 1.3) ? 1 : 0.1 // Spitzen sofort adaptieren
+    const mz = (maxy > divy * 1.3) ? 1 : 0.05 // 1 Spitzen sofort adaptieren, sonst alle 20
     //console.log(`Maxy:${maxy} Div:${divy.toFixed(1)} MZ:${mz}`)
     localRadarRawIdata.divy = (1 - mz) * divy + (mz * maxy)
 }
