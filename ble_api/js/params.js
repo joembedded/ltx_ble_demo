@@ -362,7 +362,7 @@ export async function blxEditSysparam() {
 
 export async function blxEditServiceParam() {
     const dlg = JD.prepareCustomDialog(
-        ll("Service Parameter Edit Mode"),'',
+        ll("Service Parameter Edit Mode"),'<hr><h3 style="text-align: center"><i class="bi orange jo-icon-ani-beat bi-exclamation-triangle-fill"></i> Only for Service! <i class="bi orange jo-icon-ani-beat bi-exclamation-triangle-fill"></i></h3><hr>',
         `Iparam`,  `<button id='editBtnSysparam'>Sysparam</button>`
     )
 
@@ -385,18 +385,18 @@ export async function blxEditServiceParam() {
 Es muss 2 Funktionen geben: zerlegen und zusammensetzen. */
 
 // Klassischer Editor iParam
-export async function blxEditIparamTabbed(fakeparam = false) {
+export async function blxEditIparamTabbed(ev, fakeparam = false) {
     if (fakeparam !== true) blxDevice = blx.getDevice()
-    const oparam = blxDevice.iparam
-    const ipo = buildIparamObject(oparam);
+    ce_original_par = blxDevice.iparam
+    const ipo = buildIparamObject(ce_original_par);
     for (; ;) {
         const res = await editIparamDialogDoNeu(ipo) // ipo bereits als Referen
         console.log("Result: ", res);
         if (res === 'OK') {
             const parfileNeu = buildIparamFile(ipo);
-            const noDiff = compareIparamFiles(oparam, parfileNeu);
+            const noDiff = compareIparamFiles(ce_original_par, parfileNeu);
 
-            console.log("Original: ", oparam);
+            console.log("Original: ", ce_original_par);
             console.log("Neu: ", parfileNeu);
             console.log("noDiff: ", noDiff);
 
@@ -779,7 +779,7 @@ export async function paramTest() {
     //console.log("Original - paramTest: ", parfile);
 
     blxDevice = { iparam: parfile } // Einfachheitshalber direkt im Device-Objekt, wie es später auch sein wird
-    await blxEditIparamTabbed(true) // Öffnet den neuen Editor
+    await blxEditIparamTabbed(null,true) // Öffnet den neuen Editor
 
 }
 
