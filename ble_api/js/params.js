@@ -13,7 +13,7 @@ import { blx } from './blx.js'
 /*eslint no-unused-vars: off*/
 
 //--------- globals ------ 
-export const VERSION = 'V0.01 / 15.03.2026'
+export const VERSION = 'V0.10 / 24.04.2026'
 export const COPYRIGHT = '(C)JoEmbedded.de'
 
 // ============================================================
@@ -52,7 +52,7 @@ const p100_beschr = [
     ":d MinTemp_oC[-40..10]",
     ":c Config0_U31 (B0:OffPer.Inet:On/Off B1,2:BLE:On/Mo/Li/MoLi B3:EnDS B4:CE:Off/On B5:Live:Off/On)",
     ":i Configuration_Command[$79]",
-    ":s Internet_Offset[0..86399]"
+    ":s Internet_Offset_sec[0..86399]"
 ]
 const pkan_beschr = [
     "*N @ChanNo",
@@ -608,15 +608,14 @@ function escHtml(v) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;')
 }
-
+// Spannende Fkt: Ersellt aus komplexem Label was Einfaches als Tab-Überschrift
 function shortLabelFromDescr(descr, fallback) {
     let txt = descr || fallback || ''
     if (txt.length > 2 && (txt.charAt(0) === '*' || txt.charAt(0) === ':')) txt = txt.substring(2)
-    const bidx = txt.indexOf('[')
-    if (bidx >= 0) txt = txt.substring(0, bidx)
-    txt = txt.replace(/_/g, ' ').trim()
-    if (!txt) txt = fallback || 'field'
-    return txt.substring(0, 30) // max 30 chars
+    // txt = txt.replace(/_/g, ' ').trim() Mit _ ists authentischer
+    if (!txt) txt = fallback || 'fieldname'
+    let result = (txt.length > 50) ? (txt.substring(0, 47) + '...') : txt
+    return result
 }
 
 function buildIparamDialogHtml(ipo) {
