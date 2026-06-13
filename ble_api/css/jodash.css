@@ -17,20 +17,6 @@
     --nightgray13: #202020;
     --txtblack3: #080808;
     --black0: #000000;
-    --white: var(--white100);
-    --txtblack: var(--txtblack3);
-
-    --app-bg: #eef3f6;
-    --surface: #ffffff;
-    --surface-soft: #f7fafc;
-    --line-soft: #d6e0e7;
-    --accent: #1677c7;
-    --accent-strong: #0f5f9f;
-    --accent-soft: #d9ecfb;
-    --ok: #16803d;
-    --warn: #b96300;
-    --danger: #c73333;
-    --shadow-soft: 0 14px 36px rgba(18, 38, 63, 0.12);
 
     /* Spezialmarkierungen */
     --red: red;
@@ -48,33 +34,28 @@
     --fontrel: 1;
     --scrollms: 200ms;
     /* Maximalbreite Sidebar, so dass alles i.d.R. reinpasst */
-    --lnavwidth_max: min(calc(48px + var(--fontrel)*210px), 72vw);
+    --lnavwidth_max: calc(32px + var(--fontrel)*200px);
 
     /* Heights Header/Footer, unterschiedlich falls noch Menues rein muessen */
-    --hdrheight: calc(20px + var(--fontrel)*36px);
-    --ftrheight: calc(20px + var(--fontrel)*18px);
+    --hdrheight: calc(16px + var(--fontrel)*32px);
+    --ftrheight: calc(16px + var(--fontrel)*16px);
 
     /* Nifty icon, taken from 'pico.css' use as e.g. <img width='128' style="content: var(--icon-loading);"> or background-image:, etc */
     --icon-loading: url("data:image/svg+xml,%3Csvg fill='none' height='24' width='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' %3E%3Cstyle%3E g %7B animation: rotate 2s linear infinite; transform-origin: center center; %7D circle %7B stroke-dasharray: 75,100; stroke-dashoffset: -5; animation: dash 1.5s ease-in-out infinite; stroke-linecap: round; %7D @keyframes rotate %7B 0%25 %7B transform: rotate(0deg); %7D 100%25 %7B transform: rotate(360deg); %7D %7D @keyframes dash %7B 0%25 %7B stroke-dasharray: 1,100; stroke-dashoffset: 0; %7D 50%25 %7B stroke-dasharray: 44.5,100; stroke-dashoffset: -17.5; %7D 100%25 %7B stroke-dasharray: 44.5,100; stroke-dashoffset: -62; %7D %7D %3C/style%3E%3Cg%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='grey' stroke-width='4' /%3E%3C/g%3E%3C/svg%3E");
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
 html,
 body {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 
-    background-color: var(--app-bg);
+    background-color: var(--white100);
     color: var(--txtblack3);
 
+    font-family: sans-serif;
     font-size: calc(var(--fontrel) * 16px);
     font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.45;
 
 }
 
@@ -90,25 +71,6 @@ select,
 option,
 input {
     font-size: inherit;
-}
-
-select,
-input {
-    min-height: 2.25em;
-    border: 1px solid var(--line-soft);
-    border-radius: 6px;
-    background-color: var(--surface);
-    color: var(--txtblack3);
-    padding: 0.25em 0.45em;
-}
-
-input:focus,
-select:focus,
-button:focus-visible,
-.jo-sibu:focus-visible,
-.jo-main-hamb:focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--accent) 28%, transparent);
-    outline-offset: 2px;
 }
 
 input:invalid {
@@ -237,7 +199,7 @@ input[type=checkbox] {
 }
 
 .blebluelight {
-    color: var(--blebluelight);
+    color: var(----blebluelight);
 }
 
 /* Fuer kleine Effekte, ein roter Neon-Effekt */
@@ -322,7 +284,7 @@ input[type=checkbox] {
         /* flex-direction: row; // default */
         background-color: var(--nightgray13);
         color: var(--txtwhite97);
-        padding: .25em .75em;
+        padding: .2em;
         height: var(--hdrheight);
         /* align-items: center: Alle auf einer Linie */
         align-items: center;
@@ -332,8 +294,7 @@ input[type=checkbox] {
             position: relative;
             background-color: var(--txtwhite97);
             color: var(--txtblack3);
-            border-radius: 6px;
-            cursor: pointer;
+            border-radius: 0.2em;
 
             &>i {
                 font-size: 2em;
@@ -348,7 +309,7 @@ input[type=checkbox] {
             }
 
             &:hover {
-                background-color: var(--accent-soft);
+                background-color: var(--hovergray75);
             }
         }
     }
@@ -356,28 +317,22 @@ input[type=checkbox] {
     .jo-menu-footer {
         display: flex;
         /* flex-direction: row; // default */
-        background-color: var(--surface);
-        border-top: 1px solid var(--line-soft);
+        background-color: var(--nightgray13);
         color: var(--txtwhite97);
         gap: 0.5em;
         padding: .2em;
         height: var(--ftrheight);
-        flex: 0 0 var(--ftrheight);
         /* align-items: center: Alle auf einer Linie */
         align-items: center;
-        overflow: hidden;
     }
 
     /* header footer  ENDE */
 
     .jo-chcontent {
         /* border: 4px solid goldenrod; */
-        flex: 1 1 auto;
-        min-height: 0;
 
         .jo-sidebarcontent {
             display: flex;
-            min-height: 0;
             /* flex-direction: row; // default */
             /* border: 4px solid blue; */
 
@@ -386,12 +341,11 @@ input[type=checkbox] {
                 height: calc(100svh - var(--hdrheight) - var(--ftrheight));
                 flex: 0 0 var(--lnavwidth_max);
                 transition: flex-basis var(--scrollms);
-                background-color: var(--surface-soft);
+                background-color: var(--whitegray94);
 
                 color: var(--txtblack3);
-                padding: 0.45em;
+                padding-right: 0.1em;
                 overflow: auto;
-                border-right: 1px solid var(--line-soft);
 
                 /* Small: Only Icons */
                 &.jo-sidebar-small {
@@ -415,12 +369,9 @@ input[type=checkbox] {
 
                 .jo-sinavinfo {
                     padding: .1em 0.33em;
-                    background-color: transparent;
-                    color: var(--lowmidgray38);
+                    background-color: var(--silvergray69);
                     font-size: 0.7em;
                     font-weight: bold;
-                    text-transform: uppercase;
-                    letter-spacing: 0;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -434,15 +385,13 @@ input[type=checkbox] {
                     align-items: center;
                     flex-wrap: nowrap;
 
-                    background-color: transparent;
+                    background-color: var(--lightgray88);
                     text-decoration: none;
 
-                    padding: 0.65em 0.55em;
+                    padding: 0.6em 0.33em;
                     cursor: pointer;
-                    border-radius: 6px;
                     white-space: nowrap;
                     overflow: hidden;
-                    gap: 0.35em;
 
                     /* Icons im Button groesser, nur direkte Kids, Icons in Buttons daher z.B. in span */
                     &>i::before {
@@ -454,7 +403,7 @@ input[type=checkbox] {
                     /* optinale Sub-Componente: Badge innerhalb eines jo-sibu */
                     .jo-badge-span {
                         position: absolute;
-                        background-color: var(--warn);
+                        background-color: var(--orange);
                         color: var(--white100);
                         top: 0.8em;
                         right: 0.1em;
@@ -467,7 +416,7 @@ input[type=checkbox] {
                         min-height: 1em;
 
                         &.jo-badge-unimportant {
-                        background-color: var(--lowmidgray38);
+                            background-color: var(--lowmidgray38);
 
                             .jo-sidebar-small & {
                                 display: none;
@@ -502,8 +451,8 @@ input[type=checkbox] {
 
                     &:hover {
                         transition: all ease var(--scrollms);
-                        background-color: var(--accent-soft);
-                        color: var(--accent-strong);
+                        background-color: var(--hovergray75);
+                        border-radius: 0.3em;
                     }
                 }
 
@@ -514,26 +463,19 @@ input[type=checkbox] {
                 /* border: 4px solid green; */
                 height: calc(100svh - var(--hdrheight) - var(--ftrheight));
                 flex: 1;
-                white-space: normal;
+                white-space: nowrap;
                 overflow: auto;
                 scroll-behavior: smooth;
-                background: linear-gradient(180deg, var(--app-bg), #f8fbfd 42%, var(--app-bg));
-                padding: 1em;
 
                 .jo-user-section {
                     /* height: calc(100svh - var(--hdrheight) - var(--ftrheight) - 1em); */
                     /* overflow: hidden; */
-                    background-color: var(--surface);
-                    color: var(--txtblack3);
+                    background-color: var(--white);
+                    color: var(--txtblack);
                     font-size: calc(1rem * var(--fontrel));
-                    padding: 1em;
-                    margin-bottom: 1em;
-                    border: 1px solid var(--line-soft);
-                    border-radius: 8px;
+                    padding: 0.5em;
                     display: flex;
                     flex-direction: column;
-                    max-width: 1120px;
-                    box-shadow: 0 1px 2px rgba(18, 38, 63, 0.06);
 
                     & .jo-stdcanvas {
                         height: calc((100svh - var(--hdrheight) - var(--ftrheight)) * 0.66);
@@ -549,17 +491,14 @@ input[type=checkbox] {
 /* Dialoge alle moeglichst aehnlich */
 button {
     font-size: 1em;
-    padding: 0.45em 0.75em;
-    background-color: var(--surface);
+    padding: 0.1em 0.3em;
+    background-color: var(--lightgray88);
     color: var(--txtblack3);
-    border-radius: 6px;
-    border: 1px solid var(--line-soft);
-    min-height: 2.35em;
-    cursor: pointer;
+    border-radius: 0.3em;
+    border: 1px solid var(--txtblack3);
 
     &:hover {
-        background-color: var(--accent-soft);
-        border-color: color-mix(in srgb, var(--accent) 42%, var(--line-soft));
+        background-color: var(--hovergray75)
     }
 
     &:disabled {
@@ -571,14 +510,13 @@ button {
 
 dialog {
     position: relative;
-    border-radius: 8px;
-    border: 1px solid var(--line-soft);
+    border-radius: 0.5em;
+    border: 1px solid var(--txtblack3);
     color: var(--txtblack3);
-    background-color: var(--surface);
+    background-color: var(--txtwhite97);
     min-width: 35%;
     max-width: 90%;
-    padding: 1em;
-    box-shadow: var(--shadow-soft);
+    padding: 0.8em;
     /* Anscheinend fuer Leaflet Z-index >=401.. */
     z-index: 1000;
     white-space: nowrap;
@@ -590,7 +528,7 @@ dialog {
 
     /* Scroller-Content, passend fuer Header und 1 Ueberschriftszeile */
     .jo-dialog-big {
-        border: 1px solid var(--line-soft);
+        border: 1px solid var(--silvergray69);
         overflow: auto;
         max-height: calc(85vh - 5em);
         padding: 0.8em;
@@ -613,7 +551,6 @@ dialog {
         font-size: 1.2em;
         font-weight: bold;
         padding-bottom: 0.5em;
-        color: var(--nightgray13);
     }
 
     .jo-dialog-footer {
@@ -635,214 +572,5 @@ dialog {
         & progress {
             width: 90%;
         }
-    }
-}
-
-/* Visual refresh and responsive behavior */
-.jo-vcontainer .jo-menu-header {
-    background: #17202a;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
-    gap: 0.35em;
-}
-
-.jo-vcontainer .jo-menu-header>span:not(.jo-main-hamb):not(.jo-menu-right) {
-    font-weight: 700;
-}
-
-.jo-vcontainer .jo-menu-footer {
-    color: var(--txtblack3);
-    padding: .25em .75em;
-    gap: .75em;
-}
-
-.jo-vcontainer .jo-sidebar .jo-sibu.bleblue {
-    color: var(--accent-strong);
-}
-
-.jo-vcontainer .jo-sidebar .jo-sibu.green,
-button.green {
-    color: var(--ok);
-}
-
-button.green:hover {
-    background-color: color-mix(in srgb, var(--ok) 12%, white);
-    border-color: color-mix(in srgb, var(--ok) 40%, var(--line-soft));
-}
-
-.jo-vcontainer .jo-sidebar .jo-sibu:not(.jo-disabled):active,
-button:active {
-    transform: translateY(1px);
-}
-
-.jo-user-section>div:first-child {
-    color: var(--nightgray13);
-}
-
-.jo-user-section>div:first-child b {
-    font-size: 1.15em;
-}
-
-.jo-user-section hr {
-    border: 0;
-    border-top: 1px solid var(--line-soft);
-    margin: 0.75em 0 1em;
-}
-
-#section_main>div:nth-child(2)>div {
-    display: block;
-    max-width: 820px;
-}
-
-#blxDeviceName,
-#blxMAC,
-#blxType,
-#blxFW,
-#blxMemory,
-#blxSync,
-#blxMeasureData,
-#blxInfoLine,
-#blxCmdRes {
-    overflow-wrap: anywhere;
-}
-
-#blxTerminalOut {
-    min-height: 18em;
-    padding: 0.8em;
-    border-radius: 8px;
-    border-color: var(--line-soft) !important;
-    background: #121820;
-    color: #d8f2e4;
-    font-family: Consolas, "Courier New", monospace;
-    font-size: 0.92em;
-    overflow: auto !important;
-    white-space: pre-wrap;
-}
-
-#blxTerminalCmd {
-    font-family: Consolas, "Courier New", monospace;
-}
-
-#blxSignal,
-.jo-badge-span {
-    box-shadow: 0 1px 2px rgba(18, 38, 63, 0.2);
-}
-
-table {
-    border-collapse: collapse;
-    max-width: 100%;
-}
-
-th,
-td {
-    padding: 0.35em 0.55em;
-    border-bottom: 1px solid var(--line-soft);
-}
-
-th {
-    background: var(--surface-soft);
-}
-
-@media (max-width: 720px) {
-    :root {
-        --hdrheight: calc(18px + var(--fontrel)*34px);
-        --ftrheight: calc(18px + var(--fontrel)*18px);
-    }
-
-    .jo-vcontainer .jo-menu-header,
-    .jo-vcontainer .jo-menu-footer {
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-    }
-
-    .jo-vcontainer .jo-menu-header .jo-font-small {
-        display: none;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar {
-        flex-basis: 3.4em;
-        padding: 0.35em 0.25em;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar:not(.jo-sidebar-hidden):not(.jo-sidebar-small) {
-        flex-basis: min(15rem, 72vw);
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-content {
-        padding: 0.55em;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-content .jo-user-section {
-        padding: 0.8em;
-        margin-bottom: 0.6em;
-    }
-
-    button {
-        margin-top: 0.2em;
-        margin-bottom: 0.2em;
-    }
-
-    input[type=text],
-    input:not([type]),
-    select {
-        max-width: 100%;
-    }
-
-    dialog {
-        min-width: auto;
-        width: min(92vw, 34rem);
-        white-space: normal;
-    }
-
-    .jo-dialog-big {
-        white-space: normal;
-    }
-}
-
-@media (max-width: 520px) {
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar,
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar:not(.jo-sidebar-hidden):not(.jo-sidebar-small),
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar.jo-sidebar-small {
-        flex: 0 0 3.45em;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar .jo-sinavinfo {
-        height: 0.4em;
-        padding: 0.1em 0;
-        color: transparent;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar .jo-sibu {
-        justify-content: center;
-        padding-left: 0.25em;
-        padding-right: 0.25em;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar .jo-sibu>i::before {
-        margin-right: 0;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar .jo-sibu span:nth-child(2) {
-        display: none;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-sidebar .jo-sibu .jo-badge-span {
-        top: 0.25em;
-        left: 1.55em;
-        right: auto;
-        max-width: 1.5em;
-        overflow: hidden;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-content {
-        padding: 0.45em;
-    }
-
-    .jo-vcontainer .jo-chcontent .jo-sidebarcontent .jo-content .jo-user-section {
-        border-radius: 6px;
-    }
-
-    #blxTerminalOut {
-        min-height: 14em;
-        font-size: 0.86em;
     }
 }
