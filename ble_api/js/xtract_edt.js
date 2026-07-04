@@ -3,6 +3,7 @@
 *
 * Diese Modul holt sich eine EDT-Datei aus dem Local Store
 * und konvertiert sie nach CSV.
+* Kurz-Doku/Integration: siehe readme_xtract.md im selben Ordner.
 * Es ist etwas umstaendlicher als noetig, da 'xtraxt_demo.html' 
 * auch die AJAX-Get Daten von der LTX-M;icrocloud lesen kann,
 * was hier nicht benoetigt wird. *toDo*: Aufraeumen, AJAX entfernen

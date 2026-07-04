@@ -81,7 +81,7 @@ const p200_beschr = [ // sys_param.lxp
     ":u APN User[$41]",
     ":w APN Password[$41]",
     ":r Max_creg[10..255]",
-    ":p Port[1..65535]",
+    ":p Port[1..65535]/fPort[1..199]",
     ":t Server_timeout_0[1000..65535]",
     ":v Server_timeout_run[1000..65535]",
     ":e Modem Check Reload[60..3600]",
